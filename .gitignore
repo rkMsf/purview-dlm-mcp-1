@@ -1,0 +1,31 @@
+# ─── Node.js ───
+node_modules/
+dist/
+
+# ─── Build artifacts ───
+*.js
+*.d.ts
+*.js.map
+!jest.config.mjs
+!jest.e2e.config.mjs
+!eslint.config.mjs
+!vitest.config.ts
+!vitest.e2e.config.ts
+
+# ─── Test output ───
+test-results/
+
+# ─── Environment files ───
+.env
+.env.local
+.env.*
+
+# ─── Claude Code local settings (may contain tenant credentials) ───
+.claude/settings.local.json
+
+# ─── OS files ───
+.DS_Store
+Thumbs.db
+
+# ─── npm pack output ───
+*.tgz

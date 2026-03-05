@@ -1,0 +1,17 @@
+NOTICES
+
+This project incorporates material from the projects listed below.
+
+---
+
+@modelcontextprotocol/sdk
+https://github.com/modelcontextprotocol/typescript-sdk
+Licensed under the MIT License
+Copyright (c) Anthropic, PBC
+
+---
+
+zod
+https://github.com/colinhacks/zod
+Licensed under the MIT License
+Copyright (c) Colin McDonnell

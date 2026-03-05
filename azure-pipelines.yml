@@ -1,0 +1,51 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# CI/CD Pipeline for Purview DLM Diagnostics MCP Server (TypeScript/Node.js)
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  nodeVersion: '20.x'
+
+steps:
+  - task: NodeTool@0
+    displayName: 'Install Node.js'
+    inputs:
+      versionSpec: $(nodeVersion)
+
+  - script: npm ci
+    displayName: 'Install dependencies'
+
+  - script: npm run lint
+    displayName: 'Run ESLint'
+
+  - script: npm run build
+    displayName: 'Build TypeScript'
+
+  - script: npm test -- --ci --reporters=default --reporters=jest-junit
+    displayName: 'Run unit tests'
+    env:
+      JEST_JUNIT_OUTPUT_DIR: $(Build.ArtifactStagingDirectory)/TestResults
+
+  - task: PublishTestResults@2
+    displayName: 'Publish test results'
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '$(Build.ArtifactStagingDirectory)/TestResults/*.xml'
+    condition: always()
+
+  - script: npm pack
+    displayName: 'Create npm package'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish build artifacts'
+    inputs:
+      PathtoPublish: '$(System.DefaultWorkingDirectory)/*.tgz'
+      ArtifactName: 'purview-dlm-mcp'
