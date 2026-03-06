@@ -22,7 +22,10 @@
   },
   "files": [
     "dist",
-    ".github/skills"
+    ".github/skills",
+    ".github/copilot-instructions.md",
+    ".claude/skills",
+    "CLAUDE.md"
   ],
   "keywords": [
     "mcp",

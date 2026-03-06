@@ -1,5 +1,19 @@
 # Copilot Instructions — Purview DLM Diagnostics MCP Server
 
+## MCP Tool Selection (Runtime Diagnostics)
+
+When using the dlm-diagnostics MCP server tools:
+
+| User Intent | Tool | Examples |
+|-------------|------|----------|
+| Reports a problem or error | `run_powershell` | "retention policy not applying", "items not archiving", "policy stuck in Error" |
+| Asks how-to or conceptual question | `ask_learn` | "how do I create a retention policy", "what is eDiscovery" |
+| Asks to review commands run | `get_execution_log` | "show me what we ran", "summarize the investigation" |
+
+- **Default to `run_powershell`** for anything that sounds like troubleshooting
+- **Never use `ask_learn` for active issues** — it returns docs, not diagnostics
+- Follow diagnostic guides in `.github/skills/dlm-diagnostics/` when investigating
+
 ## Project Overview
 
 MCP server enabling AI assistants to diagnose Microsoft Purview Data Lifecycle Management (DLM) issues in Exchange Online. Provides `run_powershell` (read-only command execution) and `get_execution_log` (audit trail) tools.
