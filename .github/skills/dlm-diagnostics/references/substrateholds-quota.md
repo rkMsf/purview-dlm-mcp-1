@@ -85,13 +85,23 @@ Write-Host "Primary — TotalItemSize: $($stats.TotalItemSize) / ProhibitSendRec
 Write-Host "Primary — TotalDeletedItemSize: $($stats.TotalDeletedItemSize) / RecoverableItemsQuota: $($mbx.RecoverableItemsQuota)"
 ```
 
+### 1.1 Mailbox Holds & Configuration
+
+```powershell
+Get-OrganizationConfig | FL ElcProcessingDisabled
+```
+
+```powershell
+Get-Mailbox <UPN> | FL DisplayName, InPlaceHolds, LitigationHoldEnabled, ComplianceTagHoldApplied, DelayHoldApplied, DelayReleaseHoldApplied, RetentionPolicy, RetentionHoldEnabled, ElcProcessingDisabled, RecoverableItemsQuota, ProhibitSendReceiveQuota, ArchiveStatus, ArchiveGuid
+```
+
 ---
 
 ## Diagnostic Analysis
 
 Analyze the collected data against the following criteria. Flag each as ✅ (healthy) or ❌ (issue found).
 
-**Hold GUID prefixes:** `mbx` = Purview retention (Exchange), `cld` = Purview retention (modern group), `UniH` = eDiscovery case hold, `skp` = SharePoint/OneDrive retention.
+**Hold GUID prefixes:** `mbx` = Purview retention (Exchange), `-mbx` = Purview retention exclusion (Exchange), `cld` = Purview retention (modern group), `UniH` = eDiscovery case hold, `skp` = SharePoint/OneDrive retention.
 
 **Note:** `RetentionHoldEnabled` suspends expiration at **IPM level only** (visible folders — both deletions and archival). It has **no impact** on Dumpster/Recoverable Items expiration.
 

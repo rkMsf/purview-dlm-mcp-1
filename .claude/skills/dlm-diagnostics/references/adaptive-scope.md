@@ -18,7 +18,7 @@ Execute all commands below to gather the complete diagnostic dataset. Replace `<
 ### 1.1 Scope Configuration & Filter Query
 
 ```powershell
-Get-AdaptiveScope "<ScopeName>" | FL Name, LocationType, FilterQuery, WhenCreated, WhenChanged
+Get-AdaptiveScope "<ScopeName>" | FL Name, LocationType, RawQuery, FilterConditions, WhenCreated, WhenChanged
 ```
 
 ### 1.2 User Scope OPATH Validation
@@ -39,8 +39,8 @@ Get-Mailbox -GroupMailbox -Filter "<same filter from adaptive scope>" -ResultSiz
 ### 1.4 Associated Retention Policy Status
 
 ```powershell
-Get-RetentionCompliancePolicy "<PolicyName>" | FL Name, Enabled, Mode, DistributionStatus, AdaptiveScopeLocation
-Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail | FL DistributionDetail
+Get-RetentionCompliancePolicy "<PolicyName>" | FL Name, Enabled, Mode, AdaptiveScopeLocation
+Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail | FL DistributionStatus, DistributionDetail
 ```
 
 ### 1.5 Non-Mailbox User Inflation Check

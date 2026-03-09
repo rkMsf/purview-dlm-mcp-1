@@ -79,13 +79,16 @@ $tracingFai.MailboxLog | ConvertFrom-Json
 
 ```powershell
 $config = Test-ArchiveConnectivity <UPN> -IncludeArchiveMRMConfiguration
-$policyTags = ([xml]$config.PrimaryMRMConfiguration).UserConfiguration.Info.Data.PolicyTag
-$archiveTags = ([xml]$config.PrimaryMRMConfiguration).UserConfiguration.Info.Data.ArchiveTag
-$defaultArchiveTags = ([xml]$config.PrimaryMRMConfiguration).UserConfiguration.Info.Data.DefaultArchiveTag
+([xml]$config.PrimaryMRMConfiguration).UserConfiguration.Info.Data | FL PolicyTag, ArchiveTag
 
-$policyTags | Format-Table Name, Guid, IsVisible, OptedInto, Type
-$archiveTags | Format-Table Name, Guid, IsVisible, OptedInto, Type
-$defaultArchiveTags | Format-Table Name, Guid, IsVisible, OptedInto, Type
+Write-Host "`nPolicy Tags:" -ForegroundColor Cyan
+([xml]$config.PrimaryMRMConfiguration).UserConfiguration.Info.Data.PolicyTag | Format-Table Name, ObjectGuid, Guid, IsVisible, OptedInto, Type, IsRemovedFromPolicy, @{ Label = "Expiry Age"; Expression = { ([xml]$_.InnerXml).ChildNodes.ExpiryAgeLimit } }
+
+Write-Host "`nArchive Tags:" -ForegroundColor Cyan
+([xml]$config.PrimaryMRMConfiguration).UserConfiguration.Info.Data.ArchiveTag | Format-Table Name, ObjectGuid, Guid, IsVisible, OptedInto, Type, IsRemovedFromPolicy, @{ Label = "Expiry Age"; Expression = { ([xml]$_.InnerXml).ChildNodes.ExpiryAgeLimit } }
+
+Write-Host "`nDefault Archive Tags:" -ForegroundColor Cyan
+([xml]$config.PrimaryMRMConfiguration).UserConfiguration.Info.Data.DefaultArchiveTag | Format-Table Name, ObjectGuid, Guid, IsVisible, OptedInto, Type, IsRemovedFromPolicy, @{ Label = "Expiry Age"; Expression = { ([xml]$_.InnerXml).ChildNodes.ExpiryAgeLimit } }
 ```
 
 ### 1.9 Active Move Requests
