@@ -14,7 +14,42 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server for d
 - [Node.js 18+](https://nodejs.org/)
 - [PowerShell 7](https://github.com/PowerShell/PowerShell)
 - [ExchangeOnlineManagement](https://www.powershellgallery.com/packages/ExchangeOnlineManagement) PowerShell module (v3.4+)
-- Exchange Online administrator credentials with compliance permissions
+- An admin account with the required permissions (see [Required Permissions](#required-permissions) below)
+
+## Required Permissions
+
+The authenticating user (`DLM_UPN`) needs read access to **both** Exchange Online and Security & Compliance PowerShell sessions.
+
+### Recommended Role Combinations
+
+| Option | Roles | Notes |
+|--------|-------|-------|
+| **Least-privilege** | **Global Reader** + **Compliance Administrator** | Recommended — covers both EXO and S&C read access |
+| **Single role group** | **Organization Management** | Covers both workloads but broader than necessary |
+| **Full admin** | **Global Administrator** | Works but overly broad — not recommended |
+
+### Why Both Workloads?
+
+The server connects to two PowerShell sessions:
+
+- **Exchange Online** (`Connect-ExchangeOnline`) — cmdlets like `Get-Mailbox`, `Get-MailboxStatistics`, `Export-MailboxDiagnosticLogs`, `Get-OrganizationConfig`
+- **Security & Compliance** (`Connect-IPPSSession`) — cmdlets like `Get-RetentionCompliancePolicy`, `Get-RetentionComplianceRule`, `Get-AdaptiveScope`, `Get-ComplianceTag`
+
+Exchange cmdlets require EXO roles; compliance cmdlets require S&C roles. Without both, some diagnostics will fail with permission errors.
+
+### Authentication
+
+The server uses **MSAL interactive browser sign-in** — a browser window opens for the user to authenticate. No credentials are stored or passed via environment variables.
+
+### Licensing Requirements
+
+Some diagnostics require specific licensing on target mailboxes:
+
+| Feature | Required License |
+|---------|-----------------|
+| Archive diagnostics | Exchange Online Archiving or E3/E5 |
+| Adaptive scopes | E5 Compliance or E5 Information Protection & Governance |
+| Teams retention | Microsoft 365 E3+ |
 
 ## Quick Start
 
