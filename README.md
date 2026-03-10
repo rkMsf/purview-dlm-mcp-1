@@ -1,5 +1,9 @@
 # Microsoft Purview DLM Diagnostics MCP
 
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](vscode:mcp/install?name=purview-dlm-mcp&config=%7B%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22https%3A%2F%2Faka.ms%2Fpurview-dlm-mcp%22%5D%2C%22env%22%3A%7B%22DLM_UPN%22%3A%22%24%7Binput%3Aupn%7D%22%2C%22DLM_ORGANIZATION%22%3A%22%24%7Binput%3Aorganization%7D%22%7D%7D)
+[![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install_Server-24bfa5?style=for-the-badge&logo=visualstudiocode&logoColor=white)](vscode-insiders:mcp/install?name=purview-dlm-mcp&config=%7B%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22https%3A%2F%2Faka.ms%2Fpurview-dlm-mcp%22%5D%2C%22env%22%3A%7B%22DLM_UPN%22%3A%22%24%7Binput%3Aupn%7D%22%2C%22DLM_ORGANIZATION%22%3A%22%24%7Binput%3Aorganization%7D%22%7D%7D)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE.txt)
+
 An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server for diagnosing Microsoft Purview Data Lifecycle Management issues via Exchange Online PowerShell.
 
 ## Features
@@ -54,22 +58,10 @@ Some diagnostics require specific licensing on target mailboxes:
 ## Quick Start
 
 ```bash
-# Clone the repository
-git clone https://github.com/microsoft/purview-dlm-mcp.git
-cd purview-dlm-mcp
-
-# Install dependencies
-npm install
-
-# Build
-npm run build
-
-# Configure environment variables
-# Set DLM_UPN and DLM_ORGANIZATION in your MCP client config (see below)
-
-# Run the server
-node dist/index.js
+npx -y https://aka.ms/purview-dlm-mcp
 ```
+
+Set `DLM_UPN` and `DLM_ORGANIZATION` in your MCP client config (see below).
 
 ## MCP Client Configuration
 
@@ -81,8 +73,8 @@ Add this to your `claude_desktop_config.json`:
 {
   "mcpServers": {
     "dlm-diagnostics": {
-      "command": "node",
-      "args": ["/path/to/purview-dlm-mcp/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "https://aka.ms/purview-dlm-mcp"],
       "env": {
         "DLM_UPN": "admin@yourtenant.onmicrosoft.com",
         "DLM_ORGANIZATION": "yourtenant.onmicrosoft.com",
@@ -102,8 +94,8 @@ Add this to your `.vscode/settings.json` or user settings:
   "mcp": {
     "servers": {
       "dlm-diagnostics": {
-        "command": "node",
-        "args": ["/path/to/purview-dlm-mcp/dist/index.js"],
+        "command": "npx",
+        "args": ["-y", "https://aka.ms/purview-dlm-mcp"],
         "env": {
           "DLM_UPN": "admin@yourtenant.onmicrosoft.com",
           "DLM_ORGANIZATION": "yourtenant.onmicrosoft.com",
