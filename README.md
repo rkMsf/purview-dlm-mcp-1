@@ -4,7 +4,7 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server for d
 
 ## Features
 
-- **3 MCP tools** — `run_powershell` for executing read-only Exchange Online commands, `get_execution_log` for retrieving a full audit trail, and `ask_learn` for Microsoft Learn documentation lookup
+- **4 MCP tools** — `run_powershell` for executing read-only Exchange Online commands, `get_execution_log` for retrieving a full audit trail, `ask_learn` for Microsoft Learn documentation lookup, and `create_issue` for reporting issues with the MCP server to GitHub
 - **11 TSG reference guides** — step-by-step diagnostic workflows aligned to common DLM symptoms
 - **72 diagnostic checks** — automated evaluation engine that parses PowerShell output and produces structured findings with remediation
 - **Cmdlet allowlist** — only pre-approved read-only cmdlets can be executed; mutating commands are blocked
@@ -122,6 +122,7 @@ Add this to your `.vscode/settings.json` or user settings:
 | `run_powershell` | Execute a read-only Exchange Online PowerShell command against the allowlist |
 | `get_execution_log` | Retrieve the log of all commands executed during the current session |
 | `ask_learn` | Look up Microsoft Purview documentation on Microsoft Learn (fallback when no TSG matches) |
+| `create_issue` | Report an issue with the MCP server to GitHub, attaching session diagnostic context |
 
 ### Tool Examples
 
@@ -186,6 +187,22 @@ Create and configure retention policies to automatically retain or delete conten
 - [Retention policies for Exchange Online](https://learn.microsoft.com/purview/retention-policies-exchange)
 ```
 
+#### `create_issue`
+
+> **User:** "The allowlist is rejecting Get-ComplianceTag even though it should be allowed — file a bug"
+
+The AI uses `create_issue` to report the bug to the MCP server's GitHub repo:
+
+```
+✅ Created GitHub issue #42
+   Title: Allowlist incorrectly blocks Get-ComplianceTag cmdlet
+   Category: bug
+   Labels: bug
+   URL: https://github.com/microsoft/purview-dlm-mcp/issues/42
+
+   Session context included: 3 commands executed, 1 failure
+```
+
 ### Environment Variables
 
 | Variable | Required | Description |
@@ -219,6 +236,7 @@ The server is a TypeScript/Node.js application built with the `@modelcontextprot
 3. **PowerShell Executor** (`src/powershell/executor.ts`) — manages the PowerShell child process lifecycle and auth
 4. **Cmdlet Allowlist** (`src/powershell/allowlist.ts`) — validates every command against the approved cmdlet list before execution
 5. **TSG Diagnostics Engine** (`src/tsg-diagnostics.ts`) — evaluates command output against reference guide checklists
+6. **GitHub Integration** (`src/github/auth.ts`, `src/github/issues.ts`) — authenticates via `DLM_GITHUB_TOKEN` or `gh auth token` and creates structured GitHub issues
 
 ## Security Model
 
