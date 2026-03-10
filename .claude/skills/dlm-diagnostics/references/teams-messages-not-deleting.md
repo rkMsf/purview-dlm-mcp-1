@@ -19,10 +19,10 @@ Execute all commands below to gather the complete diagnostic dataset. Replace `<
 ### 1.1 Policy Configuration & Status
 
 ```powershell
-Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail| FL TeamsChannelLocation, TeamsChannelLocationException, TeamsChatLocation, TeamsChatLocationException, Enabled, Mode, DistributionStatus
+Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail | FL TeamsChannelLocation, TeamsChannelLocationException, TeamsChatLocation, TeamsChatLocationException, Enabled, Mode, DistributionStatus
 Get-RetentionComplianceRule -Policy "<PolicyName>" | FL RetentionDuration, RetentionComplianceAction
 
-Get-AppRetentionCompliancePolicy "<PolicyName>" -DistributionDetail| FL ExchangeLocation, ExchangeLocationException, Enabled, Mode
+Get-AppRetentionCompliancePolicy "<PolicyName>" -DistributionDetail | FL ExchangeLocation, ExchangeLocationException, Enabled, Mode
 Get-AppRetentionComplianceRule -Policy "<PolicyName>" | FL RetentionDuration, RetentionComplianceAction
 ```
 

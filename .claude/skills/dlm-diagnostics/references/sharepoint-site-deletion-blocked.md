@@ -17,7 +17,7 @@ Execute all commands below to gather the complete diagnostic dataset. Replace `<
 ### 1.1 Identify Retention Policies Targeting SharePoint
 
 ```powershell
-Get-RetentionCompliancePolicy -DistributionDetail| Where-Object {$_.SharePointLocation -eq "All" -or $_.SharePointLocation -contains "<SiteURL>"} | FL Name, Guid, SharePointLocation, SharePointLocationException, Enabled, DistributionStatus
+Get-RetentionCompliancePolicy -DistributionDetail | Where-Object {$_.SharePointLocation -eq "All" -or $_.SharePointLocation -contains "<SiteURL>"} | FL Name, Guid, SharePointLocation, SharePointLocationException, Enabled, DistributionStatus
 ```
 
 ### 1.2 Retention Rules for Each Policy
@@ -30,7 +30,7 @@ Get-RetentionComplianceRule -Policy "<PolicyName>" | FL Name, RetentionDuration,
 ### 1.3 OneDrive Retention Policies (If OneDrive Site)
 
 ```powershell
-Get-RetentionCompliancePolicy -DistributionDetail| Where-Object {$_.OneDriveLocation -eq "All" -or $_.OneDriveLocation -contains "<SiteURL>"} | FL Name, Guid, OneDriveLocation, OneDriveLocationException, AdaptiveScopeLocation, Applications, Enabled, Mode
+Get-RetentionCompliancePolicy -DistributionDetail | Where-Object {$_.OneDriveLocation -eq "All" -or $_.OneDriveLocation -contains "<SiteURL>"} | FL Name, Guid, OneDriveLocation, OneDriveLocationException, AdaptiveScopeLocation, Applications, Enabled, Mode
 ```
 
 ### 1.4 Preservation Hold Library Status

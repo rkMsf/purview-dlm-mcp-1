@@ -22,7 +22,7 @@ The Recoverable Items (RI) folder contains hidden subfolders that store retained
 | **SubstrateHolds** | Teams messages, Copilot interactions, Viva Engage content retained by Purview | Part of RI quota |
 | **Versions** | Original copies of modified items (copy-on-write for holds) | Part of RI quota |
 
-**Default quotas:** RI quota = 30 GB (E3/E5), 100 GB (with holds/auto-expanding). Warning at 20 GB / 90 GB respectively.
+**Default quotas:** RI quota = 30 GB (E3/E5), 100 GB (with holds), 105GB (holds with auto-expanding). Warning at 20 GB / 90 GB respectively.
 
 ---
 
@@ -85,14 +85,27 @@ Write-Host "Primary — TotalItemSize: $($stats.TotalItemSize) / ProhibitSendRec
 Write-Host "Primary — TotalDeletedItemSize: $($stats.TotalDeletedItemSize) / RecoverableItemsQuota: $($mbx.RecoverableItemsQuota)"
 ```
 
-### 1.1 Mailbox Holds & Configuration
+### 1.8 Mailbox Holds & Configuration
 
 ```powershell
+# ELC disabled or not at organization level
 Get-OrganizationConfig | FL ElcProcessingDisabled
 ```
 
+### 1.9 Teams Message Folders statistics
+
 ```powershell
-Get-Mailbox <UPN> | FL DisplayName, InPlaceHolds, LitigationHoldEnabled, ComplianceTagHoldApplied, DelayHoldApplied, DelayReleaseHoldApplied, RetentionPolicy, RetentionHoldEnabled, ElcProcessingDisabled, RecoverableItemsQuota, ProhibitSendReceiveQuota, ArchiveStatus, ArchiveGuid
+# /TeamsMessagesData — contains active Teams chat messages stored in the primary mailbox
+# /Recoverable Items/SubstrateHolds — contains deleted Teams chat messages retained by hold settings
+Get-MailboxFolderStatistics <UPN> -FolderScope NonIPMRoot | Where-Object {
+    $_.FolderPath -match "TeamsMessagesData|SubstrateHolds"
+} | Format-Table FolderPath, FolderSize, ItemsInFolder
+```
+
+### 1.10 Recoverable Items Breakdown (Primary Mailbox)
+
+```powershell
+Get-MailboxFolderStatistics <UPN> -FolderScope RecoverableItems | Format-Table FolderPath, FolderSize, ItemsInFolder
 ```
 
 ---

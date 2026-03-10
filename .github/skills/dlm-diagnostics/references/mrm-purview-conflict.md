@@ -18,7 +18,7 @@ Execute all commands below to gather the complete diagnostic dataset. Replace `<
 ### 1.1 All Active Retention Mechanisms on Mailbox
 
 ```powershell
-Get-Mailbox <UPN> | FL RetentionPolicy, RetentionHoldEnabled, InPlaceHolds, LitigationHoldEnabled, ComplianceTagHoldApplied
+Get-Mailbox <UPN> | FL RetentionPolicy, RetentionHoldEnabled, InPlaceHolds, LitigationHoldEnabled, ComplianceTagHoldApplied, DelayHoldApplied, DelayReleaseHoldApplied
 ```
 
 ### 1.2 MRM Tags and Actions
@@ -130,8 +130,8 @@ Based on flagged issues from the diagnostic report, apply the corresponding reso
 | 2 | Expected behavior — user perceives deletion | Communicate: items are preserved in RI by Purview hold; use eDiscovery to surface if needed |
 | 3 | Legacy MRM not cleaned up | Remove MRM policy: `Set-Mailbox <UPN> -RetentionPolicy $null`; or disable specific delete tags: `Set-RetentionPolicyTag "<TagName>" -RetentionEnabled $false` |
 | 4 | Conflicting Purview policies | Consolidate policies; apply Principles of Retention to predict outcomes |
-| 5 | Corrupted MRM processing state | `Set-Mailbox <UPN> -RemoveMRMConfiguration` then `Start-ManagedFolderAssistant <UPN>` |
-| 6 | Stale FAI configuration | `Set-Mailbox <UPN> -RemoveMRMConfiguration` then `Start-ManagedFolderAssistant <UPN>` |
+| 5 | Corrupted MRM processing state | Suggest customer run: `Remove-MailboxUserConfiguration -Mailbox <UPN> -Identity "Inbox\IPM.Configuration.MRM"` then `Start-ManagedFolderAssistant <UPN>` |
+| 6 | Stale FAI configuration | Suggest customer run: `Remove-MailboxUserConfiguration -Mailbox <UPN> -Identity "Inbox\IPM.Configuration.MRM"` then `Start-ManagedFolderAssistant <UPN>` |
 
 **General recommendation:** Migrate fully to Purview retention policies and deprecate MRM delete/retain tags.
 

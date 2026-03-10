@@ -13,6 +13,11 @@ describe("CmdletAllowlist", () => {
     "Get-User -ResultSize 1",
     "Test-ArchiveConnectivity user@example.com",
     "Export-MailboxDiagnosticLogs user@example.com",
+    "Get-AdminAuditLogConfig | FL UnifiedAuditLogIngestionEnabled",
+    "Get-UnifiedAuditLogRetentionPolicy | FL Name, RetentionDuration",
+    "Get-MailboxAuditBypassAssociation -Identity user@example.com",
+    "Get-AppRetentionCompliancePolicy -DistributionDetail | FL Name",
+    "Get-AppRetentionComplianceRule -Policy TestPolicy | FL Name",
   ])("allows whitelisted cmdlet: %s", (command) => {
     const result = validateCommand(command);
     expect(result.valid).toBe(true);
@@ -61,6 +66,6 @@ describe("CmdletAllowlist", () => {
   });
 
   test("allowed cmdlets contains expected count", () => {
-    expect(allowedCmdlets.size).toBe(17);
+    expect(allowedCmdlets.size).toBe(33);
   });
 });

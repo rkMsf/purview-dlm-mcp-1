@@ -2,39 +2,46 @@
 // Licensed under the MIT License.
 
 /** Explicitly allowed cmdlets (read-only diagnostic commands). */
-export const allowedCmdlets = new Set([
-  // Security & Compliance (IPPSSession)
-  "Get-AdaptiveScope",
-  "Get-RetentionCompliancePolicy",
-  "Get-RetentionComplianceRule",
-  "Get-ComplianceTag",
-  "Get-ComplianceTagStorageLocation",
+export const allowedCmdlets = new Set(
+  [
+    // Security & Compliance (IPPSSession)
+    "Get-AdaptiveScope",
+    "Get-RetentionCompliancePolicy",
+    "Get-RetentionComplianceRule",
+    "Get-AppRetentionCompliancePolicy",
+    "Get-AppRetentionComplianceRule",
+    "Get-ComplianceTag",
+    "Get-ComplianceTagStorageLocation",
 
-  // Exchange Online
-"Export-MailboxDiagnosticLogs",
-  "Get-AdaptiveScopeMembers",
-  "Get-CasMailbox",
-  "Get-DistributionGroup",
-  "Get-InboxRule",
-  "Get-IRMConfiguration",
-  "Get-JournalRule",
-  "Get-Mailbox",
-  "Get-MailboxFolderStatistics",
-  "Get-MailboxLocation",
-  "Get-MailboxPermission",
-  "Get-MailboxPlan",
-  "Get-MailboxStatistics",
-  "Get-MailUser",
-  "Get-MoveRequest",
-  "Get-OrganizationConfig",
-  "Get-Recipient",
-  "Get-RetentionPolicy",
-  "Get-RetentionPolicyTag",
-  "Get-TransportRule",
-  "Get-UnifiedGroup",
-  "Get-User",
-  "Test-ArchiveConnectivity",
-]);
+    // Exchange Online
+    "Export-MailboxDiagnosticLogs",
+    "Get-AdminAuditLogConfig",
+    "Get-AdaptiveScopeMembers",
+    "Get-CasMailbox",
+    "Get-DistributionGroup",
+    "Get-InboxRule",
+    "Get-IRMConfiguration",
+    "Get-JournalRule",
+    "Get-Mailbox",
+    "Get-MailboxAuditBypassAssociation",
+    "Get-MailboxFolderStatistics",
+    "Get-MailboxLocation",
+    "Get-MailboxPermission",
+    "Get-MailboxPlan",
+    "Get-MailboxStatistics",
+    "Get-MailUser",
+    "Get-MoveRequest",
+    "Get-OrganizationConfig",
+    "Get-Recipient",
+    "Get-RetentionPolicy",
+    "Get-RetentionPolicyTag",
+    "Get-TransportRule",
+    "Get-UnifiedAuditLogRetentionPolicy",
+    "Get-UnifiedGroup",
+    "Get-User",
+    "Test-ArchiveConnectivity",
+  ].map((c) => c.toLowerCase()),
+);
 
 /** Verb prefixes that are NEVER allowed (mutating cmdlets). */
 const blockedPrefixes = [

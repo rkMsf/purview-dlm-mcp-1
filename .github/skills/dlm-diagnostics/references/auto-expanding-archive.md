@@ -52,7 +52,34 @@ foreach ($loc in $mbx.MailboxLocations) {
 Write-Host "Aggregated: ${totalGB} GB"
 ```
 
-### 1.5 ELC Last Success & MRM Logs
+### 1.5 Total Archive Size
+
+```powershell
+$stats = Get-MailboxStatistics <UPN> -Archive
+$itemGB = [math]::Round(([long]((($stats.TotalItemSize.Value -split "\(")[1] -split " ")[0] -replace ",","")) / [math]::Pow(1024,3), 3)
+$deletedGB = [math]::Round(([long]((($stats.TotalDeletedItemSize.Value -split "\(")[1] -split " ")[0] -replace ",","")) / [math]::Pow(1024,3), 3)
+$totalArchiveGB = [math]::Round($itemGB + $deletedGB, 3)
+Write-Host "TotalItemSize: ${itemGB} GB"
+Write-Host "TotalDeletedItemSize: ${deletedGB} GB"
+Write-Host "Total Archive Size: ${totalArchiveGB} GB"
+```
+
+### 1.5a Archive Expansion Limit (If Total Archive > 1.5 TB)
+
+> **Only run this if step 1.4 or 1.5 shows total archive size exceeding 1.5 TB (1536 GB).**
+
+```powershell
+$archiveGuid = (Get-Mailbox <UPN>).ArchiveGuid
+$logs = Export-MailboxDiagnosticLogs $archiveGuid -ExtendedProperties
+$xmlprops = [xml]($logs.MailboxLog)
+$xmlprops.Properties.MailboxTable.Property | Where-Object {$_.Name -eq "ELCMaxAggregateArchiveSize"} | Select-Object Name, Value
+```
+
+> **Interpretation:**
+> - If `ELCMaxAggregateArchiveSize` = **1.5 TB** → the archive has reached its maximum expansion limit and **will not expand further**. Implement retention delete policies to manage growth.
+> - If `ELCMaxAggregateArchiveSize` = **3 TB** → the tenant has an elevated limit. The archive can continue expanding up to 3 TB — no issue.
+
+### 1.6 ELC Last Success & MRM Logs
 
 ```powershell
 $archiveGuid = (Get-Mailbox <UPN>).ArchiveGuid
@@ -65,13 +92,13 @@ $xmlprops.Properties.MailboxTable.Property | Where-Object {$_.Name -eq "ELCLastS
 (Export-MailboxDiagnosticLogs $archiveGuid -ComponentName MRM).MailboxLog
 ```
 
-### 1.6 Archive Connectivity
+### 1.7 Archive Connectivity
 
 ```powershell
 Test-ArchiveConnectivity <UPN> -IncludeArchiveMRMConfiguration | Select-Object -ExpandProperty Result
 ```
 
-### 1.7 Ghosted Folders
+### 1.8 Ghosted Folders
 
 ```powershell
 $archiveGuid = (Get-Mailbox <UPN>).ArchiveGuid
@@ -79,13 +106,6 @@ $ghosted = Get-MailboxFolderStatistics $archiveGuid | Where-Object {
     $_.LastMovedTimeStamp -ne $null -and $_.ItemsInFolder -ne 0 -and $_.ContentMailboxGuid -ne $archiveGuid
 }
 $ghosted | FT FolderPath, FolderSize, ItemsInFolder, LastMovedTimeStamp, ContentMailboxGuid
-```
-
-### 1.8 Archive Folder Structure (Corruption Check)
-
-```powershell
-$archiveGuid = (Get-Mailbox <UPN>).ArchiveGuid
-Get-MailboxFolderStatistics $archiveGuid | Where-Object {$_.FolderType -ceq "Inbox" -or $_.FolderType -ceq "SentItems"} | FL FolderPath, FolderType
 ```
 
 ### 1.9 Active Move Requests
@@ -98,19 +118,10 @@ Get-MoveRequest <UPN> -ErrorAction SilentlyContinue | FL Status, PercentComplete
 
 ## Diagnostic Analysis
 
-### Prerequisites / Licensing
-
-**Prerequisites:** Auto-expanding archive requires Exchange Online Plan 2, E3, E5, or Exchange Online Archiving add-on (`BPOS_S_Enterprise` or `BPOS_S_ArchiveAddOn` in `PersistedCapabilities`). Without this license, the feature cannot be enabled.
-
-```powershell
-$plan = Get-MailboxPlan (Get-Mailbox <UPN>).MailboxPlan; $plan.PersistedCapabilities
-```
-
 Analyze the collected data against the following criteria. Flag each as ✅ (healthy) or ❌ (issue found).
 
 | # | Check | Condition for ❌ |
 |---|---|---|
-| 0 | **License** | `PersistedCapabilities` lacks `BPOS_S_Enterprise` or `BPOS_S_ArchiveAddOn` |
 | 1 | **Auto-expanding enabled** | Both org-level and user-level `AutoExpandingArchiveEnabled` = False |
 | 2 | **Archive size ≥ 90 GB** | Total archive size < 90 GB (expansion threshold not reached) |
 | 3 | **Auxiliary archives exist** | No `AuxArchive` entries in MailboxLocations |
@@ -119,7 +130,7 @@ Analyze the collected data against the following criteria. Flag each as ✅ (hea
 | 6 | **ELC last run** | `ELCLastSuccessTimestamp` > 5 days ago or absent |
 | 7 | **MRM errors** | MRM diagnostic logs contain errors |
 | 8 | **Archive connectivity** | `Test-ArchiveConnectivity` result does not contain "Successfully" |
-| 9 | **Aggregated size** | Total across MainArchive + AuxArchive > 1.4 TB (warn) or > 1.5 TB (hard limit) |
+| 9 | **Aggregated size vs expansion limit** | Total across MainArchive + AuxArchive > 1.4 TB (warn) or exceeds `ELCMaxAggregateArchiveSize` (hard limit). If `ELCMaxAggregateArchiveSize` = 1.5 TB and total ≥ 1.5 TB → ❌ archive **will not expand further**. If `ELCMaxAggregateArchiveSize` = 3 TB and total < 3 TB → ✅ no issue |
 | 10 | **Per-location quota** | Any individual archive location within 5 GB of its quota |
 | 11 | **Quota consistency** | `ArchiveQuota` + `RecoverableItemsQuota` > 240 GB (unusual) |
 | 12 | **Ghosted folders** | Ghosted folders with `LastMovedTimeStamp` > 30 days old |

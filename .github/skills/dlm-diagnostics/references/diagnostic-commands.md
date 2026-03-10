@@ -50,7 +50,12 @@ Get-RetentionPolicyTag | FL Name, Type, RetentionAction, AgeLimitForRetention, R
 ## Recoverable Items
 
 ```powershell
+# Primary mailbox
 Get-MailboxFolderStatistics <user> -FolderScope RecoverableItems | FL Name, FolderSize, ItemsInFolder
+
+# MainArchive only (use MailboxGuid from Get-MailboxLocation)
+$mainArchiveGuid = (Get-MailboxLocation -User <user> | Where-Object { $_.MailboxLocationType -eq "MainArchive" }).MailboxGuid
+Get-MailboxFolderStatistics $mainArchiveGuid -FolderScope RecoverableItems | FL Name, FolderSize, ItemsInFolder
 ```
 
 ## Inactive Mailboxes
@@ -111,12 +116,6 @@ Get-RetentionComplianceRule -Policy "<name>" | FL ContentMatchQuery, ContentCont
 
 # Linked retention label
 Get-ComplianceTag | FL Name, Guid, RetentionDuration, RetentionAction
-```
-
-> **NOTE:** `Get-Label` is not available via the MCP tool. This command must be executed manually by the admin in a PowerShell session.
-
-```powershell
-Get-Label | Format-Table DisplayName, Name, Guid
 ```
 
 ## Self-Help Diagnostics
