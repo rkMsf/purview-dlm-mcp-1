@@ -2,7 +2,7 @@
 
 ## Project Purpose
 
-This is an MCP (Model Context Protocol) server that enables AI assistants to diagnose Microsoft Purview Data Lifecycle Management (DLM) issues in Exchange Online. It provides three tools—`run_powershell`, `get_execution_log`, and `ask_learn`—that let an AI run read-only PowerShell commands against Exchange Online and Security & Compliance sessions, review the diagnostic trail, and look up Microsoft Learn documentation.
+This is an MCP (Model Context Protocol) server that enables AI assistants to diagnose Microsoft Purview Data Lifecycle Management (DLM) issues in Exchange Online. It provides four tools—`run_powershell`, `get_execution_log`, `ask_learn`, and `create_issue`—that let an AI run read-only PowerShell commands against Exchange Online and Security & Compliance sessions, review the diagnostic trail, look up Microsoft Learn documentation, and report issues with the MCP server to GitHub.
 
 ## Architecture
 
@@ -17,6 +17,9 @@ src/
 │   └── executor.ts                 # PsExecutor: child_process.spawn('pwsh'), MSAL auth via subprocess, marker-based polling
 ├── tsg-diagnostics.ts              # All diagnostics: Severity enum, parsers, 10 evaluators (~1700 lines), report renderer
 ├── asklearn.ts                     # Topic map (11 topics) + keyword lookup + markdown formatting
+├── github/
+│   ├── auth.ts                     # GitHubAuth: DLM_GITHUB_TOKEN env var → gh CLI fallback, in-memory token cache
+│   └── issues.ts                   # buildIssueBody, categoryToLabels, createGitHubIssue via REST API
 ├── logger.ts                       # In-memory LogEntry[] + toMarkdown()
 └── utils.ts                        # escapeForPs, tryParseJson, truncate
 tests/
@@ -24,7 +27,9 @@ tests/
 │   ├── cmdletAllowlist.test.ts     # ~23 tests
 │   ├── outputParsers.test.ts       # ~29 tests
 │   ├── askLearn.test.ts            # ~10 tests
-│   └── executionLog.test.ts        # ~5 tests
+│   ├── executionLog.test.ts        # ~5 tests
+│   ├── githubAuth.test.ts          # ~8 tests
+│   └── githubIssues.test.ts        # ~10 tests
 └── e2e/
     ├── endToEnd.test.ts            # ~30 tests (requires EXO)
     ├── tsgEvaluators.test.ts       # ~14 tests (requires EXO)
@@ -38,6 +43,8 @@ tests/
 - **`executor.ts`** — Spawns a single long-lived `pwsh` process via `child_process.spawn`. Acquires MSAL access token by spawning a separate short-lived pwsh process that uses the MSAL DLL bundled with ExchangeOnlineManagement. Includes `executeJson<T>()` convenience method.
 - **`allowlist.ts`** — Defines the explicit set of allowed cmdlets (`Get-*`, `Test-*`, `Export-*`) and blocked verb prefixes. Every command is validated before execution.
 - **`tsg-diagnostics.ts`** — Combined module: types/enums, output parsers, 10 pure evaluator functions, and markdown report renderer. No external imports.
+- **`github/auth.ts`** — `GitHubAuth` class: resolves a GitHub token from `DLM_GITHUB_TOKEN` env var or `gh auth token` CLI, caches in-memory.
+- **`github/issues.ts`** — Builds structured issue bodies with session diagnostic context (no PII), maps categories to labels, creates issues via GitHub REST API.
 
 ## Skills
 
@@ -55,6 +62,7 @@ Skills are self-contained diagnostic guides used by AI assistants:
 2. **No stored credentials** — Authentication uses MSAL interactive browser flow via a subprocess that loads the MSAL DLL from ExchangeOnlineManagement; tokens are in-memory only.
 3. **Session isolation** — Each MCP server instance runs its own PowerShell process with its own session.
 4. **Audit trail** — Every command and result is logged via `ExecutionLog` and retrievable through `get_execution_log`.
+5. **GitHub authentication** — `create_issue` authenticates via `DLM_GITHUB_TOKEN` env var or `gh auth token` CLI; no credentials are stored.
 
 ## Development Commands
 
@@ -71,7 +79,7 @@ node dist/index.js                   # Start the MCP server
 ## Testing
 
 - **Test runner:** Vitest
-- **Unit tests (no EXO):** `cmdletAllowlist.test.ts`, `outputParsers.test.ts`, `askLearn.test.ts`, `executionLog.test.ts` — 67 tests
+- **Unit tests (no EXO):** `cmdletAllowlist.test.ts`, `outputParsers.test.ts`, `askLearn.test.ts`, `executionLog.test.ts`, `githubAuth.test.ts`, `githubIssues.test.ts` — 90 tests
 - **E2E tests (live EXO):** `endToEnd.test.ts` — 30 tests
 - **TSG integration tests (live EXO):** `tsgEvaluators.test.ts` — ~14 tests
 - **Environment variables:** Tests require `DLM_UPN` and `DLM_ORGANIZATION` for Exchange Online connectivity. `DLM_COMMAND_TIMEOUT_MS` optionally overrides the default command timeout (180 000 ms).
@@ -107,6 +115,8 @@ node dist/index.js                   # Start the MCP server
 | Ask Learn topic lookup | `src/asklearn.ts` |
 | Execution logger | `src/logger.ts` |
 | Utility functions | `src/utils.ts` |
+| GitHub authentication | `src/github/auth.ts` |
+| GitHub issue creation | `src/github/issues.ts` |
 | DLM diagnostics skill | `.github/skills/dlm-diagnostics/SKILL.md` |
 | Skill creator guide | `.github/skills/skill-creator/SKILL.md` |
 | CI/CD pipeline | `azure-pipelines.yml` |
