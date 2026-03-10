@@ -19,8 +19,11 @@ Execute all commands below to gather the complete diagnostic dataset. Replace `<
 ### 1.1 Policy Configuration & Status
 
 ```powershell
-Get-RetentionCompliancePolicy "<PolicyName>" | FL TeamsChannelLocation, TeamsChatLocation, Enabled, DistributionStatus
+Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail| FL TeamsChannelLocation, TeamsChannelLocationException, TeamsChatLocation, TeamsChatLocationException, Enabled, Mode, DistributionStatus
 Get-RetentionComplianceRule -Policy "<PolicyName>" | FL RetentionDuration, RetentionComplianceAction
+
+Get-AppRetentionCompliancePolicy "<PolicyName>" -DistributionDetail| FL ExchangeLocation, ExchangeLocationException, Enabled, Mode
+Get-AppRetentionComplianceRule -Policy "<PolicyName>" | FL RetentionDuration, RetentionComplianceAction
 ```
 
 ### 1.2 SubstrateHolds Content
@@ -47,6 +50,16 @@ Get-Mailbox -GroupMailbox | Where-Object {$_.DisplayName -like "*<TeamName>*"} |
 ```powershell
 Get-UnifiedGroup -Identity "<TeamName>" | FL InPlaceHolds
 Get-Mailbox -GroupMailbox | Where-Object {$_.DisplayName -like "*<TeamName>*"} | FL InPlaceHolds
+```
+
+### 1.6 Teams Message Folders statistics
+
+```powershell
+# /TeamsMessagesData — contains active Teams chat messages stored in the primary mailbox
+# /Recoverable Items/SubstrateHolds — contains deleted Teams chat messages retained by hold settings
+Get-MailboxFolderStatistics <UPN> -FolderScope NonIPMRoot | Where-Object {
+    $_.FolderPath -match "TeamsMessagesData|SubstrateHolds"
+} | Format-Table FolderPath, FolderSize, ItemsInFolder
 ```
 
 ---

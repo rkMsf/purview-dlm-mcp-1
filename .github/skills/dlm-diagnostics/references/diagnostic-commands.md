@@ -41,6 +41,8 @@ Get-Mailbox <user> | Select -ExpandProperty MailboxLocations
 ## MRM
 
 ```powershell
+Get-OrganizationConfig | FL ElcProcessingDisabled
+Get-Mailbox <user> | FL ElcProcessingDisabled
 Get-RetentionPolicy "<name>" | FL RetentionPolicyTagLinks
 Get-RetentionPolicyTag | FL Name, Type, RetentionAction, AgeLimitForRetention, RetentionEnabled
 ```

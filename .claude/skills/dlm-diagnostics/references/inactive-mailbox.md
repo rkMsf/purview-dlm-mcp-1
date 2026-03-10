@@ -4,7 +4,7 @@
 
 - **Mailbox permanently deleted instead of becoming inactive:** A user was deleted from Entra ID, but the mailbox was permanently purged after 30 days instead of converting to an inactive mailbox — no hold was applied before deletion.
 - **Soft-deleted mailbox approaching 30-day window:** Mailbox is in soft-deleted state and the 30-day recovery window is expiring — urgent action needed to apply a hold before permanent deletion.
-- **Cannot recover inactive mailbox with auto-expanding archive:** Recovery or restore operation fails because the inactive mailbox has auto-expanding archive enabled — `New-Mailbox -InactiveMailbox` and `New-MailboxRestoreRequest` are not supported.
+- **Cannot recover inactive mailbox with auto-expanding archive:** Recovery or restore operation fails because the inactive mailbox has auto-expanding archive enabled —  `New-MailboxRestoreRequest` is not supported.
 - **Cannot delete inactive mailbox — multiple holds:** Admin wants to permanently delete an inactive mailbox but multiple holds (retention policies, Litigation Hold, eDiscovery) prevent removal.
 - **Inactive mailbox has same SMTP as active mailbox:** Two mailboxes share the same primary SMTP address (active user + inactive mailbox), causing ambiguity in PowerShell commands and policy operations.
 - **UPN/SMTP changed before deletion:** Admin changed the UPN or primary SMTP address before deleting the user, making the inactive mailbox unmanageable via the original policy reference.
@@ -18,34 +18,44 @@ Execute all commands below to gather the complete diagnostic dataset. Replace `<
 ### 1.1 Check Inactive Mailbox Status
 
 ```powershell
-Get-Mailbox -InactiveMailboxOnly -Identity <UPN> -ErrorAction SilentlyContinue | FL UserPrincipalName, IsInactiveMailbox, InPlaceHolds, LitigationHoldEnabled
+Get-Mailbox -InactiveMailboxOnly -Identity <UPN> -ErrorAction SilentlyContinue | FL UserPrincipalName, IsInactiveMailbox, WasInactiveMailbox, InPlaceHolds, LitigationHoldEnabled, DelayHoldApplied, DelayReleaseHoldApplied, InactiveMailboxRetireTime, ComplianceTagHoldApplied
 ```
 
 ### 1.2 Check Soft-Deleted Mailbox Status
 
 ```powershell
-Get-Mailbox -SoftDeletedMailbox -Identity <UPN> -ErrorAction SilentlyContinue | FL UserPrincipalName, WhenSoftDeleted, InPlaceHolds, LitigationHoldEnabled
+Get-Mailbox -SoftDeletedMailbox -Identity <UPN> -ErrorAction SilentlyContinue | FL UserPrincipalName, IsInactiveMailbox, WasInactiveMailbox, IsSoftDeletedByRemove, IsSoftDeletedByDisable, WhenSoftDeleted, InPlaceHolds, LitigationHoldEnabled, DelayHoldApplied, DelayReleaseHoldApplied, InactiveMailboxRetireTime, ComplianceTagHoldApplied
 ```
 
 ### 1.3 Soft-Deleted Mailbox Recovery Window
 
 ```powershell
-Get-Mailbox -SoftDeletedMailbox | Where-Object {$_.UserPrincipalName -eq "<UPN>"} | FL UserPrincipalName, WhenSoftDeleted, ExchangeGuid, ArchiveGuid
+Get-Mailbox -SoftDeletedMailbox | Where-Object {$_.UserPrincipalName -eq "<UPN>"} | FL UserPrincipalName, WhenSoftDeleted, IsSoftDeletedByRemove, IsSoftDeletedByDisable, ExchangeGuid, ArchiveGuid
 ```
 
 ### 1.4 Retention Policies Covering Exchange
 
 ```powershell
-Get-RetentionCompliancePolicy | FL Name, ExchangeLocation, Enabled, Mode
+# -DistributionDetail is required to populate location fields
+Get-RetentionCompliancePolicy -DistributionDetail | FL Name, ExchangeLocation, ExchangeLocationException, AdaptiveScopeLocation, Enabled, Mode, DistributionStatus
+```
+
+### 1.5 App Retention Policies Covering Exchange
+
+```powershell
+# -DistributionDetail is required to populate location fields
+Get-AppRetentionCompliancePolicy -DistributionDetail | FL Name, ExchangeLocation,ExchangeLocationException, AdaptiveScopeLocation, Enabled, Mode
+```
+
+### 1.6 Organization-Level In-Place Holds
+
+```powershell
+Get-OrganizationConfig | FL InPlaceHolds
 ```
 
 ---
 
 ## Diagnostic Analysis
-
-### Prerequisites / Licensing
-
-**Prerequisites:** Creating an inactive mailbox requires a hold (Litigation Hold, Retention Policy, or eDiscovery hold) on the mailbox before user deletion. Holds require Exchange Online Plan 2 or an Exchange Online Archiving add-on. Without this, the mailbox enters soft-delete (30-day recovery window) instead of becoming inactive.
 
 Analyze the collected data against the following criteria. Flag each as ✅ (healthy) or ❌ (issue found).
 
@@ -56,6 +66,11 @@ Analyze the collected data against the following criteria. Flag each as ✅ (hea
 | 3 | **Soft-delete within 30-day window** | `WhenSoftDeleted` > 30 days ago (recovery window expired) |
 | 4 | **Hold/retention at time of deletion** | No `InPlaceHolds`, `LitigationHoldEnabled` = False on soft-deleted mailbox |
 | 5 | **Retention policy coverage** | No retention policy with `ExchangeLocation` covering the user, or policy `Enabled` = False / `Mode` = PendingDeletion |
+| 6 | **App retention policy coverage** | No app retention policy with `ExchangeLocation` covering the user, or policy `Enabled` = False / `Mode` = PendingDeletion |
+| 7 | **Org-level In-Place Holds** | `InPlaceHolds` from `Get-OrganizationConfig` is empty — no org-wide hold applied |
+| 8 | **Delay hold applied** | `DelayHoldApplied` or `DelayReleaseHoldApplied` = True — hold removal is pending; mailbox is temporarily retained for 30 days while the hold is being released |
+| 9 | **Soft-delete reason** | `IsSoftDeletedByRemove` = True (user deleted from Entra ID) vs. `IsSoftDeletedByDisable` = True (mailbox disabled) — identifies the deletion method |
+| 10 | **Inactive mailbox retire time** | `InactiveMailboxRetireTime` is populated — the inactive mailbox is scheduled for permanent deletion after all holds are removed |
 
 ---
 
@@ -81,7 +96,7 @@ Based on flagged issues from the diagnostic report, apply the corresponding reso
 ## Prevention Checklist
 
 1. Ensure **all mailboxes** are covered by an org-wide retention policy with "retain" action **before** user deletion
-2. Verify policy distribution: `Get-RetentionCompliancePolicy "<name>" -DistributionDetail`
+2. Verify policy distribution: `Get-RetentionCompliancePolicy "<name>" -DistributionDetail | FL DistributionStatus, DistributionDetail`
 3. Check hold stamp on mailbox before user deletion: `Get-Mailbox <UPN> | FL InPlaceHolds, LitigationHoldEnabled`
 
 ---
@@ -132,4 +147,4 @@ Get-Mailbox -InactiveMailboxOnly -Identity <ExchangeGuid>
 If a UPN or primary SMTP address is changed **before** the user account is deleted, the inactive mailbox cannot be removed from the retention policy because the identity no longer matches what the policy recorded.
 
 **Resolution:** This is a **preventive** scenario — do NOT change UPN/SMTP before making a mailbox inactive. If already in this state, contact Microsoft Support for backend operations.
-4. Consider Litigation Hold as a safety net for high-value mailboxes: `Set-Mailbox <UPN> -LitigationHoldEnabled $true`
+Consider Litigation Hold as a safety net for high-value mailboxes: `Set-Mailbox <UPN> -LitigationHoldEnabled $true`

@@ -17,8 +17,16 @@ Execute all commands below to gather the complete diagnostic dataset. Replace `<
 ### 1.1 Policy Status & Distribution Detail
 
 ```powershell
-Get-RetentionCompliancePolicy "<PolicyName>" | FL Name, Guid, DistributionStatus, Enabled, WhenChanged
-Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail | FL DistributionDetail
+Get-RetentionCompliancePolicy "<PolicyName>" | FL Name, Guid, Enabled, WhenChanged
+Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail | FL DistributionStatus, DistributionDetail
+```
+
+### 1.1b App Retention Policy Status (if applicable)
+
+```powershell
+# Use if the policy is an App Retention Compliance Policy (e.g., Teams, Viva Engage, Copilot)
+# -DistributionDetail is required to populate location fields
+Get-AppRetentionCompliancePolicy "<PolicyName>" -DistributionDetail | FL Name, Guid, Enabled, Mode, WhenCreated, WhenChanged, ExchangeLocation, ExchangeLocationException, AdaptiveScopeLocation
 ```
 
 ### 1.2 Policy Mode & Type
@@ -30,15 +38,16 @@ Get-RetentionCompliancePolicy "<PolicyName>" | FL Mode, Type, WhenCreated, WhenC
 ### 1.3 Adaptive Scope Check
 
 ```powershell
-Get-RetentionCompliancePolicy "<PolicyName>" | FL AdaptiveScopeLocation
+Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail | FL AdaptiveScopeLocation
 # If AdaptiveScopeLocation is populated:
-Get-AdaptiveScope "<ScopeName>" | FL Name, WhenCreated, FilterQuery
+Get-AdaptiveScope "<ScopeName>" | FL Name, WhenCreated, RawQuery, FilterConditions
 ```
 
 ### 1.4 Workload-Specific Distribution
 
 ```powershell
-Get-RetentionCompliancePolicy "<PolicyName>" | FL ExchangeLocation, ExchangeLocationException, SharePointLocation, SharePointLocationException, OneDriveLocation, OneDriveLocationException, TeamsChannelLocation, TeamsChatLocation
+# -DistributionDetail is required to populate location fields
+Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail | FL ExchangeLocation, ExchangeLocationException, SharePointLocation, SharePointLocationException, OneDriveLocation, OneDriveLocationException, TeamsChannelLocation, TeamsChatLocation
 ```
 
 ### 1.5 Duplicate Object Check

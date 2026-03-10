@@ -43,15 +43,15 @@ Get-ComplianceTag | FL Name, Guid, RetentionDuration, RetentionAction, IsRecordL
 ### 1.5 Policy Scope (Workload Locations & Adaptive Scope)
 
 ```powershell
-Get-RetentionCompliancePolicy "<PolicyName>" | FL ExchangeLocation, ExchangeLocationException, SharePointLocation, SharePointLocationException, OneDriveLocation, OneDriveLocationException, AdaptiveScopeLocation
+Get-RetentionCompliancePolicy "<PolicyName>" -DistributionDetail | FL ExchangeLocation, ExchangeLocationException, SharePointLocation, SharePointLocationException, OneDriveLocation, OneDriveLocationException, AdaptiveScopeLocation
 ```
 
 ### 1.6 Adaptive Scope Validation (If Applicable)
 
 ```powershell
 # Only if AdaptiveScopeLocation is populated
-Get-AdaptiveScope "<ScopeName>" | FL Name, LocationType, FilterQuery, WhenCreated
-Get-Recipient -Filter "<same filter from adaptive scope>" -ResultSize 10 | FL Name, RecipientType
+Get-AdaptiveScope "<ScopeName>" | FL Name, LocationType, RawQuery, FilterConditions, WhenCreated
+Get-Recipient -Filter "<same filter from RawQuery or FilterConditions>" -ResultSize 10 | FL Name, RecipientType
 ```
 
 ### 1.7 Count of All Auto-Apply Policies (Limit Check)
@@ -60,21 +60,18 @@ Get-Recipient -Filter "<same filter from adaptive scope>" -ResultSize 10 | FL Na
 Get-RetentionCompliancePolicy | Where-Object {$_.Type -eq "ApplyTag"} | Measure-Object
 ```
 
-### 1.8 Retention Label Details
-
-> **NOTE:** `Get-Label` is not available via the MCP tool. This command must be executed manually by the admin in a PowerShell session.
+### 1.8 Retention Label Details (by linked label name)
 
 ```powershell
-Get-Label | Format-Table DisplayName, Name, Guid, ContentType
+# Use the label name from PublishComplianceTag (step 1.3) to get its full details
+Get-ComplianceTag "<LabelName>" | FL Name, Guid, RetentionDuration, RetentionAction, RetentionType, IsRecordLabel, IsRegulatoryLabel, ContentType, WhenCreated, WhenChanged
 ```
+
+> **NOTE:** `Get-Label` returns **sensitivity labels**, not retention labels. If results come back from `Get-Label`, those are sensitivity labels and should not be confused with retention labels. Always use `Get-ComplianceTag` for retention label diagnostics.
 
 ---
 
 ## Diagnostic Analysis
-
-### Prerequisites / Licensing
-
-**Prerequisites:** Auto-apply retention label policies require Microsoft 365 E5, E5 Compliance, or E5 Information Protection & Governance. Trainable classifier-based auto-apply additionally requires E5 Compliance or E5 Information Protection & Governance (not available with base E5 alone in some configurations).
 
 Analyze the collected data against the following criteria. Flag each as ✅ (healthy) or ❌ (issue found).
 
