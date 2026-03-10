@@ -8,6 +8,8 @@ import { z } from "zod";
 import { PsExecutor } from "./powershell/executor.js";
 import { ExecutionLog } from "./logger.js";
 import { lookup, formatResponse } from "./asklearn.js";
+import { GitHubAuth } from "./github/auth.js";
+import { buildIssueBody, categoryToLabels, createGitHubIssue } from "./github/issues.js";
 
 async function main(): Promise<void> {
   process.stderr.write("[DLM Diagnostics MCP] Starting\u2026\n");
@@ -15,17 +17,19 @@ async function main(): Promise<void> {
   // Create singletons
   const log = new ExecutionLog();
   const executor = new PsExecutor();
+  const githubAuth = new GitHubAuth();
 
   // Create MCP server
   const server = new McpServer(
     { name: "dlm-diagnostics", version: "2.0.0" },
     {
       instructions:
-        "You are a Purview DLM diagnostic assistant with 3 tools.\n\n" +
+        "You are a Purview DLM diagnostic assistant with 4 tools.\n\n" +
         "TOOL SELECTION RULES:\n" +
         "1. User reports a PROBLEM, ERROR, or SYMPTOM → use `run_powershell` to investigate.\n" +
         "2. User asks a HOW-TO or WHAT-IS question → use `ask_learn`.\n" +
-        "3. User asks to review/audit/summarize commands already run → use `get_execution_log`.\n\n" +
+        "3. User asks to review/audit/summarize commands already run → use `get_execution_log`.\n" +
+        "4. User wants to FILE a GitHub issue from the session → use `create_issue`.\n\n" +
         "Default to `run_powershell` for anything that sounds like troubleshooting.",
     },
   );
@@ -41,7 +45,11 @@ async function main(): Promise<void> {
       "Examples: Get-RetentionCompliancePolicy, Get-Mailbox, Get-MailboxStatistics, Get-ComplianceTag. " +
       "Only Get-*/Test-*/Export-* cmdlets are allowed; mutating commands are blocked. " +
       "Returns JSON: { success, output, error, durationMs, logIndex }.",
-    { command: z.string().describe("The PowerShell cmdlet to execute (e.g., 'Get-RetentionCompliancePolicy \"PolicyName\" | FL').") },
+    {
+      command: z
+        .string()
+        .describe("The PowerShell cmdlet to execute (e.g., 'Get-RetentionCompliancePolicy \"PolicyName\" | FL')."),
+    },
     async ({ command }) => {
       const start = Date.now();
       const result = await executor.execute(command);
@@ -102,6 +110,52 @@ async function main(): Promise<void> {
       const matches = lookup(question);
       return {
         content: [{ type: "text" as const, text: formatResponse(matches) }],
+      };
+    },
+  );
+
+  // ─── Tool: create_issue ───
+
+  const ghOwner = process.env["DLM_GITHUB_OWNER"] ?? "microsoft";
+  const ghRepo = process.env["DLM_GITHUB_REPO"] ?? "purview-dlm-mcp";
+
+  server.tool(
+    "create_issue",
+    "File a GitHub issue from a diagnostic session. " +
+      "USE THIS TOOL WHEN: the user wants to report a bug, request a feature, or escalate a finding " +
+      "discovered during the diagnostic session. " +
+      "Attaches session context (commands run, pass/fail status, durations) but excludes raw outputs to avoid PII leakage. " +
+      "Requires GitHub authentication via Device Flow on first use.",
+    {
+      title: z.string().describe("Issue title — short summary of the problem or request."),
+      description: z.string().describe("Detailed description of the issue."),
+      category: z
+        .enum([
+          "retention-policy",
+          "retention-label",
+          "archive",
+          "inactive-mailbox",
+          "ediscovery",
+          "audit-log",
+          "other",
+        ])
+        .describe("Issue category — used to apply labels."),
+      environment: z.string().optional().describe("Environment details (tenant, region, license SKU, etc.)."),
+      stepsToReproduce: z.string().optional().describe("Steps to reproduce the issue."),
+    },
+    async ({ title, description, category, environment, stepsToReproduce }) => {
+      const token = await githubAuth.getToken();
+      const body = buildIssueBody({ title, description, category, environment, stepsToReproduce }, log.getAll(), null);
+      const labels = categoryToLabels(category);
+      const result = await createGitHubIssue(token, ghOwner, ghRepo, title, body, labels);
+
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: JSON.stringify({ success: true, issueUrl: result.url, issueNumber: result.number }, null, 2),
+          },
+        ],
       };
     },
   );

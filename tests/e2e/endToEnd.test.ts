@@ -29,11 +29,11 @@ async function runAndExpectSuccess(command: string): Promise<string> {
 
 // --- Group 1: Server Discovery ---
 
-test("lists exactly 3 tools", async () => {
+test("lists exactly 4 tools", async () => {
   const result = await getClient().listTools();
-  expect(result.tools).toHaveLength(3);
+  expect(result.tools).toHaveLength(4);
   const names = result.tools.map((t) => t.name).sort();
-  expect(names).toEqual(["ask_learn", "get_execution_log", "run_powershell"]);
+  expect(names).toEqual(["ask_learn", "create_issue", "get_execution_log", "run_powershell"]);
 });
 
 test("run_powershell has correct schema", async () => {

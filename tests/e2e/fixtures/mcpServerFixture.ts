@@ -14,7 +14,19 @@ export async function startServer(): Promise<Client> {
   if (client) return client;
 
   const envVars: Record<string, string> = {};
-  for (const key of ["DLM_UPN", "DLM_ORGANIZATION", "DLM_COMMAND_TIMEOUT_MS", "PATH", "USERPROFILE", "HOME", "APPDATA", "LOCALAPPDATA", "PSModulePath"]) {
+  for (const key of [
+    "DLM_UPN",
+    "DLM_ORGANIZATION",
+    "DLM_COMMAND_TIMEOUT_MS",
+    "PATH",
+    "USERPROFILE",
+    "HOME",
+    "APPDATA",
+    "LOCALAPPDATA",
+    "PSModulePath",
+    "DLM_GITHUB_OWNER",
+    "DLM_GITHUB_REPO",
+  ]) {
     const val = process.env[key];
     if (val) envVars[key] = val;
   }
