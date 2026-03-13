@@ -38,6 +38,10 @@
     "type": "git",
     "url": "git+https://github.com/microsoft/purview-dlm-mcp.git"
   },
+  "bugs": {
+    "url": "https://github.com/microsoft/purview-dlm-mcp/issues"
+  },
+  "homepage": "https://github.com/microsoft/purview-dlm-mcp#readme",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
