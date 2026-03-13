@@ -24,4 +24,5 @@ jobs:
       - run: npm run build
       - run: npm test
 
-      - run: npm publish --provenance --access public
+      - name: Publish to npm
+        run: npm publish --provenance --access public ${{ github.event_name == 'workflow_dispatch' && '--dry-run' || '' }}
