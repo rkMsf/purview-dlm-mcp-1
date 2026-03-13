@@ -34,6 +34,10 @@
     "exchange-online",
     "diagnostics"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microsoft/purview-dlm-mcp.git"
+  },
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
