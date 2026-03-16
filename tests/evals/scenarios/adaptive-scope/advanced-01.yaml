@@ -2,8 +2,10 @@ id: adaptive-scope-advanced-01
 tsg: adaptive-scope
 difficulty: advanced
 symptom: >
-  We excluded 50 users from our adaptive scope retention policy 3 weeks ago
-  but they're still showing as scoped. One disabled mailbox shows FailedToOpenContainer.
+  We excluded 50 users from our "Global Retention 5Y" policy (which uses the "All Employees Scope"
+  adaptive scope) 3 weeks ago but they're still showing as scoped. For example,
+  contractor1@contoso.com is still held and contractor2@contoso.com (a disabled mailbox)
+  shows FailedToOpenContainer.
 symptom_variants:
   - "Adaptive scope not removing excluded users"
   - "Users still held after adaptive scope exclusion 3 weeks ago"

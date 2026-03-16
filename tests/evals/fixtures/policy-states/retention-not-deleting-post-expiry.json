@@ -43,6 +43,30 @@
       "output": "Name          : Inbox\nItemsInFolder : 18422\nFolderSize    : 22.5 GB (24,159,191,040 bytes)",
       "exit_code": 0,
       "duration_ms": 1600
+    },
+    {
+      "command": "Get-OrganizationConfig | Format-List ElcProcessingDisabled",
+      "command_pattern": "get-organizationconfig",
+      "output": "ElcProcessingDisabled : False",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionCompliancePolicy",
+      "command_pattern": "get-retentioncompliancepolicy(?!.*annual)(?!.*distributiondetail)",
+      "output": "Name: Annual Cleanup Policy\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionComplianceRule",
+      "command_pattern": "get-retentioncompliancerule(?!.*annual)",
+      "output": "Name: Annual Cleanup Rule\nPolicy: Annual Cleanup Policy\nRetentionDuration: 365\nRetentionComplianceAction: Delete\nEnabled: True",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-ComplianceCase",
+      "command_pattern": "get-compliancecase",
+      "output": "",
+      "exit_code": 0
     }
   ]
 }

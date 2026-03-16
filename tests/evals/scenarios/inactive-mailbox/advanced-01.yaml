@@ -2,8 +2,10 @@ id: inactive-mailbox-advanced-01
 tsg: inactive-mailbox
 difficulty: advanced
 symptom: >
-  GDPR deletion request: need to permanently delete inactive mailbox. Remove-Mailbox fails
-  with 'please remove all holds'. Litigation hold was removed 2 months ago.
+  GDPR deletion request: need to permanently delete the inactive mailbox for
+  john.doe@contoso.com. Remove-Mailbox fails with 'please remove all holds'.
+  Litigation hold was removed 2 months ago. The mailbox may be held by the
+  "Legal Records Retention" policy.
 symptom_variants:
   - "Cannot delete inactive mailbox for GDPR compliance"
   - "Remove-Mailbox fails with holds error on inactive mailbox"

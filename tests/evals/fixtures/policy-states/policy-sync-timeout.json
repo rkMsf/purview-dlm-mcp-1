@@ -25,6 +25,18 @@
       "command_pattern": "get-recipient",
       "output": "Name: User1\nRecipientType: UserMailbox\n\nName: User2\nRecipientType: UserMailbox\n\nName: User3\nRecipientType: UserMailbox",
       "exit_code": 0, "duration_ms": 1500
+    },
+    {
+      "command": "Get-OrganizationConfig | Format-List ElcProcessingDisabled",
+      "command_pattern": "get-organizationconfig",
+      "output": "ElcProcessingDisabled : False",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-ComplianceCase",
+      "command_pattern": "get-compliancecase",
+      "output": "",
+      "exit_code": 0
     }
   ]
 }

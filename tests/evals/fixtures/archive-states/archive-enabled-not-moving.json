@@ -37,6 +37,18 @@
       "command_pattern": "get-moverequest",
       "output": "WARNING: No move request found",
       "exit_code": 0, "duration_ms": 900
+    },
+    {
+      "command": "Get-RetentionCompliancePolicy",
+      "command_pattern": "get-retentioncompliancepolicy(?!.*tag)",
+      "output": "Name: Default Exchange Retention\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionComplianceRule",
+      "command_pattern": "get-retentioncompliancerule",
+      "output": "Name: Default Exchange Retention Rule\nPolicy: Default Exchange Retention\nRetentionDuration: 2555\nRetentionComplianceAction: Keep\nEnabled: True",
+      "exit_code": 0
     }
   ]
 }

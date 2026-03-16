@@ -43,6 +43,30 @@
       "output": "FilterConditions : (Department -eq \"Legal\")\nLocationCount    : 125",
       "exit_code": 0,
       "duration_ms": 1300
+    },
+    {
+      "command": "Get-OrganizationConfig | Format-List ElcProcessingDisabled",
+      "command_pattern": "get-organizationconfig",
+      "output": "ElcProcessingDisabled : False",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionCompliancePolicy",
+      "command_pattern": "get-retentioncompliancepolicy(?!.*legal)(?!.*format-list)(?!.*fl\\b)",
+      "output": "Name    : Legal Records Retention\nGuid    : 9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d\nEnabled : True\n\nName    : Standard 3Y Retention\nGuid    : 2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c\nEnabled : True",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-ComplianceCase",
+      "command_pattern": "get-compliancecase",
+      "output": "",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionComplianceRule",
+      "command_pattern": "get-retentioncompliancerule",
+      "output": "Name    : Legal Records Rule\nPolicy  : Legal Records Retention\nRetentionDuration: 2555\nRetentionComplianceAction: KeepAndDelete\nEnabled : True\n\nName    : Standard 3Y Rule\nPolicy  : Standard 3Y Retention\nRetentionDuration: 1095\nRetentionComplianceAction: KeepAndDelete\nEnabled : True",
+      "exit_code": 0
     }
   ]
 }

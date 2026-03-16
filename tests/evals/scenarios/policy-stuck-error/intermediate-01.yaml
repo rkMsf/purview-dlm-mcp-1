@@ -2,7 +2,8 @@ id: policy-stuck-error-intermediate-01
 tsg: policy-stuck-error
 difficulty: intermediate
 symptom: >
-  Three retention policies showing errors in compliance portal after tenant migration.
+  Three retention policies showing errors in compliance portal after tenant migration:
+  "Finance Records 7Y", "APAC Adaptive Retention", and "Post-Migration Retention 1Y".
   Some show PolicySyncTimeout, one shows FailedToOpenContainer.
 symptom_variants:
   - "Multiple retention policies in error state after migration"

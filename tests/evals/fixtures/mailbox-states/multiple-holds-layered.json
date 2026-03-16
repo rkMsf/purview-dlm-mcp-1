@@ -36,6 +36,24 @@
       "output": "DisplayName           : Maria Garcia\nItemCount             : 125,442\nTotalItemSize         : 48.2 GB (51,751,489,536 bytes)\nTotalDeletedItemSize  : 95.3 GB (102,316,498,944 bytes)",
       "exit_code": 0,
       "duration_ms": 1400
+    },
+    {
+      "command": "Get-OrganizationConfig | Format-List ElcProcessingDisabled",
+      "command_pattern": "get-organizationconfig",
+      "output": "ElcProcessingDisabled : False",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionComplianceRule",
+      "command_pattern": "get-retentioncompliancerule",
+      "output": "Name: GDPR 7-Year Retention Rule\nPolicy: GDPR 7-Year Retention\nRetentionDuration: 2555\nRetentionComplianceAction: KeepAndDelete\nEnabled: True",
+      "exit_code": 0
+    },
+    {
+      "command": "Export-MailboxDiagnosticLogs -Identity maria.garcia@contoso.com -ComponentName MRM",
+      "command_pattern": "export-mailboxdiagnosticlogs.*maria.*mrm",
+      "output": "MailboxLog : <?xml version=\"1.0\"?><Properties><MailboxTable><Property><n>ELCLastSuccessTimestamp</n><Value>3/10/2026 2:15:00 PM</Value></Property><Property><n>ELCLastRunDeletedFromRootItemCount</n><Value>0</Value></Property></MailboxTable></Properties>",
+      "exit_code": 0
     }
   ]
 }

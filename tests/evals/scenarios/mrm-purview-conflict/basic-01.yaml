@@ -2,9 +2,9 @@ id: mrm-purview-conflict-basic-01
 tsg: mrm-purview-conflict
 difficulty: advanced
 symptom: >
-  User has both an MRM retention policy and a Purview retention policy.
-  Emails are being deleted unexpectedly after 30 days instead of the
-  expected 7 years.
+  user@contoso.com has the "Corp 30-Day Delete" MRM retention policy and a Purview
+  retention policy. Emails are being deleted unexpectedly after 30 days instead of
+  the expected 7 years.
 symptom_variants:
   - "MRM and Purview retention conflict"
   - "Emails deleted too soon, both retention systems active"

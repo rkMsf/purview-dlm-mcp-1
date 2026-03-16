@@ -43,6 +43,18 @@
       "output": "Name          : Inbox\nItemsInFolder : 5200\n\nName          : Sent Items\nItemsInFolder : 4800\n\nName          : Calendar\nItemsInFolder : 1890\n\nName          : Notes\nItemsInFolder : 0\n\nName          : Drafts\nItemsInFolder : 1000",
       "exit_code": 0,
       "duration_ms": 1600
+    },
+    {
+      "command": "Get-OrganizationConfig | Format-List ElcProcessingDisabled",
+      "command_pattern": "get-organizationconfig",
+      "output": "ElcProcessingDisabled : False",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionCompliancePolicy",
+      "command_pattern": "get-retentioncompliancepolicy(?!.*tag)",
+      "output": "Name: Default Exchange Retention\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All",
+      "exit_code": 0
     }
   ]
 }

@@ -43,6 +43,30 @@
       "output": "DistributionStatus    : Success\nLastStatusUpdateTime  : 03/14/2026 09:00:00 AM",
       "exit_code": 0,
       "duration_ms": 1500
+    },
+    {
+      "command": "Get-OrganizationConfig | Format-List ElcProcessingDisabled",
+      "command_pattern": "get-organizationconfig",
+      "output": "ElcProcessingDisabled : False",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionCompliancePolicy",
+      "command_pattern": "get-retentioncompliancepolicy(?!.*global)(?!.*distributiondetail)",
+      "output": "Name: Global Retention 5Y\nAdaptiveScopeLocation: All Employees Scope\nDistributionStatus: Success\nEnabled: True",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionComplianceRule",
+      "command_pattern": "get-retentioncompliancerule",
+      "output": "Name: Global Retention 5Y Rule\nPolicy: Global Retention 5Y\nRetentionDuration: 1825\nRetentionComplianceAction: KeepAndDelete\nEnabled: True",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-ComplianceCase",
+      "command_pattern": "get-compliancecase",
+      "output": "",
+      "exit_code": 0
     }
   ]
 }

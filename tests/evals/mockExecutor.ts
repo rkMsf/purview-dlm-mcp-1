@@ -34,8 +34,8 @@ export class MockPowerShellExecutor {
 
   constructor(opts: MockExecutorOptions) {
     this.logger = opts.logger;
-    this.defaultOutput = opts.defaultOutput ?? "WARNING: No fixture matched this command.";
-    this.defaultExitCode = opts.defaultExitCode ?? 1;
+    this.defaultOutput = opts.defaultOutput ?? "No results returned.";
+    this.defaultExitCode = opts.defaultExitCode ?? 0;
     this.loadFixtures(opts.fixturePath);
   }
 

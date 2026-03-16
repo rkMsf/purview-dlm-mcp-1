@@ -43,6 +43,18 @@
       "output": "ElcProcessingDisabled : False",
       "exit_code": 0,
       "duration_ms": 1100
+    },
+    {
+      "command": "Get-RetentionCompliancePolicy",
+      "command_pattern": "get-retentioncompliancepolicy(?!.*tag)",
+      "output": "Name: Default Exchange Retention\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-ComplianceCase",
+      "command_pattern": "get-compliancecase",
+      "output": "",
+      "exit_code": 0
     }
   ]
 }

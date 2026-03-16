@@ -2,8 +2,9 @@ id: retention-policy-not-applying-intermediate-01
 tsg: retention-policy-not-applying
 difficulty: intermediate
 symptom: >
-  Our 1-year keep-then-delete retention policy has been active for 2 years. Items from
-  18 months ago still present. Policy shows Success. We're being audited.
+  Our "Annual Cleanup Policy" (1-year keep-then-delete) has been active for 2 years. Items from
+  18 months ago are still present in finance.user@contoso.com's mailbox. Policy shows
+  Success. We're being audited.
 symptom_variants:
   - "Retention policy not deleting old items despite Success status"
   - "1-year delete policy active for 2 years but items remain"
