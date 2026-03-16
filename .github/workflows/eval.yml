@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci
-      - run: npx vitest run tests/evals/security/
+      - run: npx vitest run --config vitest.eval.config.ts tests/evals/security/
 
   eval-deterministic:
     name: Deterministic Scoring

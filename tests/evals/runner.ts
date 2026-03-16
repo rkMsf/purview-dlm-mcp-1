@@ -240,8 +240,9 @@ async function main() {
       // Use softer thresholds for agent mode (non-deterministic)
       const toolThreshold = config.mode === "agent" ? 0.7 : 0.8;
       const diagThreshold = config.mode === "agent" ? 0.6 : 0.7;
+      const hasDiagLayer = config.layers.includes("diagnostic-accuracy");
       const pass = result.tool_selection.weighted_total >= toolThreshold
-        && result.diagnostic.weighted_total >= diagThreshold;
+        && (!hasDiagLayer || result.diagnostic.weighted_total >= diagThreshold);
 
       if (pass) {
         logger.scenarioPass(scenario.id, result.tool_selection.weighted_total, result.diagnostic.weighted_total, result.duration_ms);
@@ -288,9 +289,10 @@ async function main() {
   if (judge) await judge.destroy();
   if (agentRunner) await agentRunner.destroy();
 
-  // Exit code based on thresholds
+  // Exit code based on thresholds (skip diagnostic threshold when layer not requested)
+  const hasDiagLayer = config.layers.includes("diagnostic-accuracy");
   const pass = report.summary.avg_tool_selection >= 0.9
-    && report.summary.avg_diagnostic_accuracy >= 0.85
+    && (!hasDiagLayer || report.summary.avg_diagnostic_accuracy >= 0.85)
     && report.summary.security_pass_rate >= 1.0;
 
   process.exit(pass ? 0 : 1);
