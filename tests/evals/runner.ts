@@ -124,9 +124,8 @@ async function main() {
       }
     } catch (err) {
       logger.error(`Failed to create judge: ${err}`);
-      logger.warn("Falling back to deterministic-only scoring (no LLM judge)");
-      // Remove diagnostic-accuracy from effective layers so threshold is skipped
-      config.layers = config.layers.filter((l) => l !== "diagnostic-accuracy");
+      logger.error("diagnostic-accuracy layer requires a working LLM judge. Set COPILOT_GITHUB_TOKEN or use --byok.");
+      process.exit(2);
     }
   }
 
