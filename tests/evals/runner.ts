@@ -385,7 +385,7 @@ function buildReport(config: EvalConfig, results: EvalResult[], security: Securi
 
   return {
     timestamp: new Date().toISOString(),
-    config: { judge_model: config.judge_model, layers: config.layers, mode: config.mode ?? "deterministic" },
+    config: { judge_model: config.judge_model, layers: config.layers, mode: config.mode ?? "deterministic", agent_model: config.agent_model },
     summary: {
       total_scenarios: results.length,
       avg_tool_selection: avgTool,
