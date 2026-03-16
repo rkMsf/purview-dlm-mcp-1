@@ -43,6 +43,12 @@
       "command_pattern": "get-compliancecase",
       "output": "",
       "exit_code": 0
+    },
+    {
+      "command": "Get-AppRetentionComplianceRule",
+      "command_pattern": "get-appretentioncompliancerule",
+      "output": "Name: Teams App Retention Rule\nPolicy: Teams App Retention\nRetentionDuration: 365\nRetentionComplianceAction: Delete\nEnabled: True",
+      "exit_code": 0
     }
   ]
 }

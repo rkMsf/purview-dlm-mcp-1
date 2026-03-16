@@ -2,8 +2,8 @@ id: policy-stuck-error-basic-01
 tsg: policy-stuck-error
 difficulty: basic
 symptom: >
-  Our retention policy status shows PolicySyncTimeout in the compliance portal.
-  It was working fine last month but now shows Error.
+  Our retention policy "Financial Records Retention" status shows PolicySyncTimeout
+  in the compliance portal. It was working fine last month but now shows Error.
 symptom_variants:
   - "Retention policy stuck in error state"
   - "Policy shows PolicySyncTimeout, content not being retained"

@@ -9,9 +9,15 @@ symptom_variants:
   - "Site on hold, cannot delete"
 expected_tools:
   - tool: run_powershell
-    command: "Get-RetentionCompliancePolicy | Format-List Name, SharePointLocation, SharePointLocationException"
-  - tool: ask_learn
-    query: "SharePoint site deletion retention hold"
+    command: "Get-RetentionCompliancePolicy | Format-List Name, SharePointLocation, SharePointLocationException, OneDriveLocation, OneDriveLocationException, DistributionStatus, Enabled"
+  - tool: run_powershell
+    command: "Get-RetentionComplianceRule | Format-List Name, Policy, RetentionDuration, RetentionComplianceAction, Mode"
+    optional: true
+  - tool: run_powershell
+    command: "Get-ComplianceCase | Format-List Name, Status, CaseType"
+    optional: true
+  - tool: run_powershell
+    command: "Get-OrganizationConfig | Format-List ElcProcessingDisabled"
     optional: true
 ground_truth:
   root_cause: "Site is included in a Purview retention policy — sites under retention cannot be deleted until the policy is removed or an exception is added"

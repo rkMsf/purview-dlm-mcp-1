@@ -206,12 +206,13 @@ async function main() {
       });
 
       // LLM judge scoring (if available)
+      const psTrace = trace.filter(t => t.tool === "run_powershell");
       let result: EvalResult;
       if (judge) {
         try {
           const judgeResult = await judge.judge({
             scenario,
-            agent_trace: trace,
+            agent_trace: psTrace,
             agent_response: agentResponse,
           });
 

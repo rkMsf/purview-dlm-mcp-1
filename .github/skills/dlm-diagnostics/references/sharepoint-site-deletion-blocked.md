@@ -12,65 +12,68 @@
 
 ## Data Collection
 
-Execute all commands below to gather the complete diagnostic dataset. Replace `<SiteURL>` with the affected SharePoint site URL (e.g., `https://contoso.sharepoint.com/sites/target`).
+Execute the commands below to gather the diagnostic dataset. Part A commands are available via the MCP tool. Part B commands require PnP PowerShell or SharePoint Online Management Shell and must be run manually by the admin.
+
+Replace `<SiteURL>` with the affected SharePoint site URL (e.g., `https://contoso.sharepoint.com/sites/target`).
+
+### Part A: MCP-Available Commands (run these first)
 
 ### 1.1 Identify Retention Policies Targeting SharePoint
 
 ```powershell
-Get-RetentionCompliancePolicy -DistributionDetail | Where-Object {$_.SharePointLocation -eq "All" -or $_.SharePointLocation -contains "<SiteURL>"} | FL Name, Guid, SharePointLocation, SharePointLocationException, Enabled, DistributionStatus
+Get-RetentionCompliancePolicy | FL Name, SharePointLocation, SharePointLocationException, OneDriveLocation, OneDriveLocationException, DistributionStatus, Enabled
 ```
 
 ### 1.2 Retention Rules for Each Policy
 
 ```powershell
-# For each policy found above:
-Get-RetentionComplianceRule -Policy "<PolicyName>" | FL Name, RetentionDuration, RetentionComplianceAction, Mode, ApplyComplianceTag, PublishComplianceTag, ComplianceTagProperty
+Get-RetentionComplianceRule | FL Name, Policy, RetentionDuration, RetentionComplianceAction, Mode
 ```
 
-### 1.3 OneDrive Retention Policies (If OneDrive Site)
+### 1.3 Check for eDiscovery Holds
 
 ```powershell
-Get-RetentionCompliancePolicy -DistributionDetail | Where-Object {$_.OneDriveLocation -eq "All" -or $_.OneDriveLocation -contains "<SiteURL>"} | FL Name, Guid, OneDriveLocation, OneDriveLocationException, AdaptiveScopeLocation, Applications, Enabled, Mode
+Get-ComplianceCase | FL Name, Status, CaseType
 ```
 
-### 1.4 Preservation Hold Library Status
+### 1.4 Organization Config
 
-> **NOTE:** The following commands require **PnP PowerShell** (`PnP.PowerShell` module) and cannot be executed via the MCP tool. They must be run manually by the admin.
+```powershell
+Get-OrganizationConfig | FL ElcProcessingDisabled
+```
+
+### Part B: Manual Commands (require PnP PowerShell / SPO Shell)
+
+> The following commands require **PnP PowerShell** (`PnP.PowerShell`) or **SharePoint Online Management Shell** (`Microsoft.Online.SharePoint.PowerShell`) and **cannot be run via the MCP tool**. Provide these to the admin for manual execution.
+
+### 1.5 Preservation Hold Library Status
 
 ```powershell
 Connect-PnPOnline -Url "<SiteURL>" -Interactive
 Get-PnPList -Identity "Preservation Hold Library" | FL Title, ItemCount, LastItemModifiedDate
 ```
 
-### 1.5 Site Lock State
-
-> **NOTE:** Requires **SharePoint Online Management Shell** (`Microsoft.Online.SharePoint.PowerShell`). Not available via the MCP tool.
+### 1.6 Site Lock State
 
 ```powershell
 Get-SPOSite -Identity "<SiteURL>" | Select Url, LockState, StorageQuota, StorageUsageCurrent
 ```
 
-### 1.6 Site Compliance Attribute
-
-> **NOTE:** Requires PnP PowerShell.
+### 1.7 Site Compliance Attribute
 
 ```powershell
 Connect-PnPOnline -Url "<SiteURL>" -Interactive
 Get-PnPSite -Includes InformationRightsManagementSettings | FL ComplianceAttribute
 ```
 
-### 1.7 Retention Labels on Site Content
-
-> **NOTE:** Requires PnP PowerShell.
+### 1.8 Retention Labels on Site Content
 
 ```powershell
 Connect-PnPOnline -Url "<SiteURL>" -Interactive
 Get-PnPListItem -List "Documents" | Where-Object {$_["_ComplianceTag"] -ne $null} | Select FileLeafRef, _ComplianceTag
 ```
 
-### 1.8 Second-Stage Recycle Bin
-
-> **NOTE:** Requires PnP PowerShell.
+### 1.9 Second-Stage Recycle Bin
 
 ```powershell
 Get-PnPRecycleBinItem -SecondStage | Measure-Object

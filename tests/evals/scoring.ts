@@ -125,7 +125,8 @@ export function scoreTrajectory(trace: AgentTraceEntry[], expected: ToolCall[]):
 }
 
 export function deterministicToolScore(trace: AgentTraceEntry[], scenario: EvalScenario): ToolSelectionScore {
-  const t = scoreTrajectory(trace, scenario.expected_tools);
+  const psTrace = trace.filter(t => t.tool === "run_powershell");
+  const t = scoreTrajectory(psTrace, scenario.expected_tools);
   const toolAcc = t.matches.length > 0 ? t.matches.reduce((s, m) => s + m.score, 0) / t.matches.length : 0;
   const matched = t.matches.filter((m) => m.matched);
   const paramAcc = matched.length > 0 ? matched.reduce((s, m) => s + m.score, 0) / matched.length : 0;

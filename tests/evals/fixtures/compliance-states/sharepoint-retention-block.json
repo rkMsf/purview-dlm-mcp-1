@@ -25,6 +25,12 @@
       "command_pattern": "get-organizationconfig",
       "output": "ElcProcessingDisabled : False",
       "exit_code": 0
+    },
+    {
+      "command": "Get-ComplianceCase",
+      "command_pattern": "get-compliancecase",
+      "output": "",
+      "exit_code": 0
     }
   ]
 }

@@ -49,6 +49,24 @@
       "command_pattern": "get-compliancecase",
       "output": "",
       "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionCompliancePolicy -Identity abc12300-0000-0000-0000-000000000000",
+      "command_pattern": "get-retentioncompliancepolicy.*-identity.*abc123",
+      "output": "Name: Policy1\nGuid: abc12300-0000-0000-0000-000000000000\nExchangeLocation: All\nDistributionStatus: Success\nEnabled: True\nMode: Enforce",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionCompliancePolicy -Identity def45600-0000-0000-0000-000000000000",
+      "command_pattern": "get-retentioncompliancepolicy.*-identity.*def456",
+      "output": "Name: Policy2\nGuid: def45600-0000-0000-0000-000000000000\nExchangeLocation: All\nDistributionStatus: Success\nEnabled: True\nMode: Enforce",
+      "exit_code": 0
+    },
+    {
+      "command": "Get-RetentionCompliancePolicy -Identity 78900000-0000-0000-0000-000000000000",
+      "command_pattern": "get-retentioncompliancepolicy.*-identity.*7890",
+      "output": "Name: Policy3\nGuid: 78900000-0000-0000-0000-000000000000\nExchangeLocation: All\nDistributionStatus: Success\nEnabled: True\nMode: Enforce",
+      "exit_code": 0
     }
   ]
 }

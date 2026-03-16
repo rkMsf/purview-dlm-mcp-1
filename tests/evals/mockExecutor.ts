@@ -134,6 +134,15 @@ export class MockPowerShellExecutor {
       .replace(/\|\s*format-table\b/g, "| format-list")
       // Strip property lists after format-list (already normalized)
       .replace(/\|\s*format-list\s+[\w*,\s]+$/g, "| format-list")
+      // Strip # comment lines
+      .replace(/^#[^\n]*\n?/gm, "")
+      // Strip $var = ... assignment prefixes (up to the first pipe or semicolon)
+      .replace(/\$\w+\s*=\s*[^|;]*[|;]\s*/g, "")
+      // Strip Where-Object / ForEach-Object filter blocks
+      .replace(/\|\s*where-object\s*\{[^}]*\}/gi, "")
+      .replace(/\|\s*foreach-object\s*\{[^}]*\}/gi, "")
+      // Strip Write-Host calls
+      .replace(/;\s*write-host\b[^|]*/gi, "")
       // Strip noise parameters agents add
       .replace(/-resultsize\s+\S+/g, "")
       .replace(/-autosize\b/g, "")
