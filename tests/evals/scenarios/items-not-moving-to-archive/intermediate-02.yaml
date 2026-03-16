@@ -2,8 +2,9 @@ id: items-not-moving-to-archive-intermediate-02
 tsg: items-not-moving-to-archive
 difficulty: intermediate
 symptom: >
-  Archive works for most folders but Notes folder is 15GB and nothing moves. We applied a
-  6-month personal archive tag to Notes but it's been months.
+  Archive works for most folders for sarah.kim@contoso.com but the Notes folder
+  is 15GB and nothing moves. We applied a 6-month personal archive tag to Notes
+  but it's been months.
 symptom_variants:
   - "Notes folder not archiving despite personal tag"
   - "Archive works everywhere except Notes folder"

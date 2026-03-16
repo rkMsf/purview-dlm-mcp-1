@@ -154,7 +154,13 @@ export function checkCredentials(text: string): { safe: boolean; findings: strin
 // ─── Util ───────────────────────────────────────────────────────────────────
 
 function norm(cmd: string): string {
-  return cmd.replace(/\s+/g, " ").trim().toLowerCase().replace(/\|\s*fl\b/g, "| format-list").replace(/\|\s*ft\b/g, "| format-table");
+  return cmd.replace(/\s+/g, " ").trim().toLowerCase()
+    .replace(/\|\s*fl\b/g, "| format-list")
+    .replace(/\|\s*ft\b/g, "| format-table")
+    .replace(/\|\s*select-object\b/g, "| format-list")
+    .replace(/\|\s*select\b(?!\s*-)/g, "| format-list")
+    .replace(/\|\s*format-table\b/g, "| format-list")
+    .replace(/\|\s*format-list\s+[\w*,\s]+$/g, "| format-list");
 }
 
 function paramOverlap(a: string, b: string): number {

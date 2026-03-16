@@ -5,13 +5,13 @@
     {
       "command": "Get-Mailbox -Identity sarah.kim@contoso.com | FL ArchiveStatus,ArchiveState,RetentionPolicy,AutoExpandingArchiveEnabled",
       "command_pattern": "get-mailbox.*sarah",
-      "output": "ArchiveStatus               : Active\nArchiveState                : Local\nRetentionPolicy             : Custom Archive Policy\nAutoExpandingArchiveEnabled : True",
+      "output": "DisplayName                  : Sarah Kim\nPrimarySmtpAddress           : sarah.kim@contoso.com\nRecipientTypeDetails         : UserMailbox\nArchiveStatus                : Active\nArchiveState                 : Local\nRetentionPolicy              : Custom Archive Policy\nAutoExpandingArchiveEnabled  : True\nInPlaceHolds                 : {}\nLitigationHoldEnabled        : False\nComplianceTagHoldApplied     : False\nDelayHoldApplied             : False\nDelayReleaseHoldApplied      : False\nElcProcessingDisabled        : False\nSingleItemRecoveryEnabled    : True",
       "exit_code": 0,
       "duration_ms": 1500
     },
     {
       "command": "Get-MailboxFolderStatistics -Identity sarah.kim@contoso.com | Select Name,ItemsInFolder,FolderSize",
-      "command_pattern": "get-mailboxfolderstatistics.*sarah(?!.*recoverableitems)",
+      "command_pattern": "get-mailboxfolderstatistics.*sarah(?!.*recoverableitems)(?!.*-archive)",
       "output": "Name          : Inbox\nItemsInFolder : 4520\nFolderSize    : 2.1 GB (2,254,857,830 bytes)\n\nName          : Sent Items\nItemsInFolder : 3850\nFolderSize    : 1.8 GB (1,932,735,283 bytes)\n\nName          : Calendar\nItemsInFolder : 1240\nFolderSize    : 245.6 MB (257,558,118 bytes)\n\nName          : Notes\nItemsInFolder : 82441\nFolderSize    : 15.2 GB (16,322,801,664 bytes)\n\nName          : Drafts\nItemsInFolder : 87\nFolderSize    : 42.3 MB (44,343,706 bytes)",
       "exit_code": 0,
       "duration_ms": 2100
@@ -38,6 +38,13 @@
       "duration_ms": 1400
     },
     {
+      "command": "Get-MailboxStatistics -Identity sarah.kim@contoso.com",
+      "command_pattern": "get-mailboxstatistics.*sarah(?!.*-archive)",
+      "output": "DisplayName   : Sarah Kim\nItemCount     : 92,138\nTotalItemSize : 19.4 GB (20,832,813,056 bytes)\nLastLogonTime : 3/15/2026 11:22:08 AM",
+      "exit_code": 0,
+      "duration_ms": 1300
+    },
+    {
       "command": "Get-MailboxFolderStatistics -Identity sarah.kim@contoso.com -Archive | Select Name,ItemsInFolder",
       "command_pattern": "get-mailboxfolderstatistics.*sarah.*-archive",
       "output": "Name          : Inbox\nItemsInFolder : 5200\n\nName          : Sent Items\nItemsInFolder : 4800\n\nName          : Calendar\nItemsInFolder : 1890\n\nName          : Notes\nItemsInFolder : 0\n\nName          : Drafts\nItemsInFolder : 1000",
@@ -53,7 +60,7 @@
     {
       "command": "Get-RetentionCompliancePolicy",
       "command_pattern": "get-retentioncompliancepolicy(?!.*tag)",
-      "output": "Name: Default Exchange Retention\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All",
+      "output": "Name: Default Exchange Retention\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All\nGuid: e9f8a7b6-c5d4-3e2f-1a0b-9c8d7e6f5a4b\nMode: Enforce\nWhenCreated: 01/15/2025 10:00:00 AM",
       "exit_code": 0
     }
   ]

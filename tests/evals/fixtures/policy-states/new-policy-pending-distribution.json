@@ -5,7 +5,7 @@
     {
       "command": "Get-RetentionCompliancePolicy | Format-List Name, *Status*, Enabled",
       "command_pattern": "get-retentioncompliancepolicy",
-      "output": "Name                : 7-Year Exchange Retention\nEnabled             : True\nDistributionStatus  : Success\nWhenCreated         : 03/07/2026 10:30:00 AM\nExchangeLocation    : All\nMode                : Enforce",
+      "output": "Name                : 7-Year Exchange Retention\nEnabled             : True\nDistributionStatus  : Success\nWhenCreated         : 03/07/2026 10:30:00 AM\nExchangeLocation    : All\nMode                : Enforce\nGuid                : 7e987654-3210-9876-5432-109876543210",
       "exit_code": 0, "duration_ms": 2100
     },
     {
@@ -17,7 +17,7 @@
     {
       "command": "Get-Mailbox -Identity john.doe@contoso.com | Format-List RetentionPolicy, LitigationHoldEnabled, InPlaceHolds",
       "command_pattern": "get-mailbox.*-identity",
-      "output": "RetentionPolicy       :\nLitigationHoldEnabled : False\nInPlaceHolds          : {mbx7e987654321098765432109876543210:2}",
+      "output": "DisplayName                  : John Doe\nPrimarySmtpAddress           : john.doe@contoso.com\nRecipientTypeDetails         : UserMailbox\nArchiveStatus                : None\nArchiveState                 : None\nAutoExpandingArchiveEnabled  : False\nRetentionPolicy              :\nInPlaceHolds                 : {mbx7e987654321098765432109876543210:2}\nLitigationHoldEnabled        : False\nComplianceTagHoldApplied     : False\nDelayHoldApplied             : False\nDelayReleaseHoldApplied      : False\nElcProcessingDisabled        : False\nSingleItemRecoveryEnabled    : True",
       "exit_code": 0, "duration_ms": 1500
     },
     {

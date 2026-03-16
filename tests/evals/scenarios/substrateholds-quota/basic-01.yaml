@@ -2,8 +2,9 @@ id: substrateholds-quota-basic-01
 tsg: substrateholds-quota
 difficulty: intermediate
 symptom: >
-  Recoverable Items folder is growing uncontrollably on several mailboxes.
-  SubstrateHolds folder is 80GB. Users getting quota warnings.
+  Recoverable Items folder is growing uncontrollably on several mailboxes,
+  including user@contoso.com. SubstrateHolds folder is 80GB. Users getting
+  quota warnings.
 symptom_variants:
   - "Recoverable Items quota at 95%"
   - "SubstrateHolds folder consuming all recoverable items space"

@@ -2,8 +2,9 @@ id: items-not-moving-to-archive-intermediate-01
 tsg: items-not-moving-to-archive
 difficulty: intermediate
 symptom: >
-  Archive was working for months but suddenly items stopped moving.
-  Primary mailbox at 98%. We removed a retention policy 2 weeks ago.
+  Archive was working for months for alex.chen@contoso.com but suddenly
+  items stopped moving. Primary mailbox at 98%. We removed a retention
+  policy 2 weeks ago.
 symptom_variants:
   - "Archive stopped working after policy removal"
   - "Items no longer archiving since we deleted a retention policy"

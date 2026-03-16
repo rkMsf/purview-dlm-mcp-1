@@ -2,8 +2,8 @@ id: inactive-mailbox-basic-01
 tsg: inactive-mailbox
 difficulty: basic
 symptom: >
-  A user was deleted from Azure AD last week but their mailbox was
-  purged instead of becoming an inactive mailbox. We needed that data.
+  user@contoso.com was deleted from Azure AD last week but their mailbox
+  was purged instead of becoming an inactive mailbox. We needed that data.
 symptom_variants:
   - "Deleted user mailbox gone, expected inactive mailbox"
   - "Former employee mailbox not showing as inactive"

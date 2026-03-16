@@ -2,8 +2,8 @@ id: items-not-moving-to-archive-basic-01
 tsg: items-not-moving-to-archive
 difficulty: basic
 symptom: >
-  User has archive mailbox enabled but nothing is moving to it.
-  The archive has been active for a week and only has 12 items.
+  jane.smith@contoso.com has archive mailbox enabled but nothing is moving
+  to it. The archive has been active for a week and only has 12 items.
   Primary mailbox is over 40GB.
 symptom_variants:
   - "Archive enabled but items won't move"

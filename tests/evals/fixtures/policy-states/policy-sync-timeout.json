@@ -5,7 +5,7 @@
     {
       "command": "Get-RetentionCompliancePolicy | Format-List Name, *Status*, Enabled",
       "command_pattern": "get-retentioncompliancepolicy",
-      "output": "Name                : Financial Records Retention\nEnabled             : True\nDistributionStatus  : Error\nDistributionDetail  : PolicySyncTimeout\nWhenCreated         : 01/15/2026 09:00:00 AM\nExchangeLocation    : All\nSharePointLocation  : All",
+      "output": "Name                : Financial Records Retention\nEnabled             : True\nDistributionStatus  : Error\nDistributionDetail  : PolicySyncTimeout\nWhenCreated         : 01/15/2026 09:00:00 AM\nExchangeLocation    : All\nSharePointLocation  : All\nGuid                : f1234567-89ab-cdef-0123-456789abcdef\nMode                : Enforce",
       "exit_code": 0, "duration_ms": 2000
     },
     {

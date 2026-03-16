@@ -3,7 +3,8 @@ tsg: retention-policy-not-applying
 difficulty: basic
 symptom: >
   We created a 7-year retention policy for Exchange mailboxes last Monday
-  but emails older than 7 years are still there. Policy shows Success.
+  but emails older than 7 years are still there for john.doe@contoso.com.
+  Policy shows Success.
 symptom_variants:
   - "Retention policy isn't working on our Exchange mailboxes"
   - "Old emails should be deleted by retention but they're still there"

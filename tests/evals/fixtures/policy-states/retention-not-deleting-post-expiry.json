@@ -5,7 +5,7 @@
     {
       "command": "Get-RetentionCompliancePolicy \"Annual Cleanup Policy\" -DistributionDetail | FL Name,DistributionStatus,Enabled,CreatedDate,ExchangeLocation",
       "command_pattern": "get-retentioncompliancepolicy.*annual.*distributiondetail",
-      "output": "Name               : Annual Cleanup Policy\nDistributionStatus : Success\nEnabled            : True\nCreatedDate        : 01/15/2024 9:00:00 AM\nExchangeLocation   : All",
+      "output": "Name               : Annual Cleanup Policy\nDistributionStatus : Success\nEnabled            : True\nCreatedDate        : 01/15/2024 9:00:00 AM\nExchangeLocation   : All\nGuid               : ac567890-1234-5678-abcd-ef9012345678\nMode               : Enforce\nWhenCreated        : 01/15/2024 9:00:00 AM",
       "exit_code": 0,
       "duration_ms": 2100
     },
@@ -19,7 +19,7 @@
     {
       "command": "Get-Mailbox -Identity finance.user@contoso.com | FL RetentionPolicy,AutoExpandingArchiveEnabled,InPlaceHolds,DelayHoldApplied,ComplianceTagHoldApplied",
       "command_pattern": "get-mailbox.*finance",
-      "output": "RetentionPolicy              : Finance MRM Policy\nAutoExpandingArchiveEnabled   : True\nInPlaceHolds                 : {}\nDelayHoldApplied             : False\nComplianceTagHoldApplied     : False",
+      "output": "DisplayName                  : Finance User\nPrimarySmtpAddress           : finance.user@contoso.com\nRecipientTypeDetails         : UserMailbox\nArchiveStatus                : Active\nArchiveState                 : Local\nAutoExpandingArchiveEnabled  : True\nRetentionPolicy              : Finance MRM Policy\nInPlaceHolds                 : {}\nLitigationHoldEnabled        : False\nComplianceTagHoldApplied     : False\nDelayHoldApplied             : False\nDelayReleaseHoldApplied      : False\nElcProcessingDisabled        : False\nSingleItemRecoveryEnabled    : True",
       "exit_code": 0,
       "duration_ms": 1500
     },
@@ -53,7 +53,7 @@
     {
       "command": "Get-RetentionCompliancePolicy",
       "command_pattern": "get-retentioncompliancepolicy(?!.*annual)(?!.*distributiondetail)",
-      "output": "Name: Annual Cleanup Policy\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All",
+      "output": "Name: Annual Cleanup Policy\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All\nGuid: ac567890-1234-5678-abcd-ef9012345678\nMode: Enforce\nWhenCreated: 01/15/2024 9:00:00 AM",
       "exit_code": 0
     },
     {

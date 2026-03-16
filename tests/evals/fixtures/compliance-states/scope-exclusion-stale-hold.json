@@ -5,30 +5,44 @@
     {
       "command": "Get-RetentionCompliancePolicy \"Global Retention 5Y\" | Format-List Name, Guid, Enabled, AdaptiveScopeLocation, DistributionStatus",
       "command_pattern": "get-retentioncompliancepolicy.*global",
-      "output": "Name                  : Global Retention 5Y\nGuid                  : a1b2c3d4-e5f6-7890-abcd-ef1234567890\nEnabled               : True\nAdaptiveScopeLocation : {All Employees Scope}\nDistributionStatus    : Success",
+      "output": "Name                  : Global Retention 5Y\nGuid                  : a1b2c3d4-e5f6-7890-abcd-ef1234567890\nEnabled               : True\nAdaptiveScopeLocation : {All Employees Scope}\nDistributionStatus    : Success\nMode                  : Enforce\nWhenCreated           : 06/01/2025 10:00:00 AM",
       "exit_code": 0,
       "duration_ms": 1500
     },
     {
       "command": "Get-AdaptiveScope \"All Employees Scope\" | Format-List Name, FilterConditions, LocationCount",
       "command_pattern": "get-adaptivescope.*all.employees",
-      "output": "Name              : All Employees Scope\nFilterConditions  : (Department -ne \"Contractors\")\nLocationCount     : 4850",
+      "output": "Name              : All Employees Scope\nFilterConditions  : (Department -ne \"Contractors\")\nLocationCount     : 4850\nLocationType      : User\nWhenCreated       : 05/15/2025 10:00:00 AM\nWhenChanged       : 03/12/2026 06:00:00 AM\nStatus            : Active",
       "exit_code": 0,
       "duration_ms": 1400
     },
     {
       "command": "Get-Mailbox -Identity contractor1@contoso.com | Format-List InPlaceHolds, DelayHoldApplied, DelayReleaseHoldApplied",
       "command_pattern": "get-mailbox.*contractor1",
-      "output": "InPlaceHolds            : {UniHa1b2c3d4-e5f6-7890-abcd-ef1234567890}\nDelayHoldApplied        : False\nDelayReleaseHoldApplied : False",
+      "output": "DisplayName                  : Contractor One\nPrimarySmtpAddress           : contractor1@contoso.com\nRecipientTypeDetails         : UserMailbox\nArchiveStatus                : None\nArchiveState                 : None\nAutoExpandingArchiveEnabled  : False\nRetentionPolicy              :\nInPlaceHolds                 : {UniHa1b2c3d4-e5f6-7890-abcd-ef1234567890}\nLitigationHoldEnabled        : False\nComplianceTagHoldApplied     : False\nDelayHoldApplied             : False\nDelayReleaseHoldApplied      : False\nElcProcessingDisabled        : False\nSingleItemRecoveryEnabled    : True",
       "exit_code": 0,
       "duration_ms": 1300
     },
     {
       "command": "Get-Mailbox -Identity contractor2@contoso.com | Format-List InPlaceHolds, DelayHoldApplied, AccountDisabled",
       "command_pattern": "get-mailbox.*contractor2",
-      "output": "InPlaceHolds            : {UniHa1b2c3d4-e5f6-7890-abcd-ef1234567890}\nDelayHoldApplied        : False\nAccountDisabled         : True",
+      "output": "DisplayName                  : Contractor Two\nPrimarySmtpAddress           : contractor2@contoso.com\nRecipientTypeDetails         : UserMailbox\nArchiveStatus                : None\nArchiveState                 : None\nAutoExpandingArchiveEnabled  : False\nRetentionPolicy              :\nInPlaceHolds                 : {UniHa1b2c3d4-e5f6-7890-abcd-ef1234567890}\nLitigationHoldEnabled        : False\nComplianceTagHoldApplied     : False\nDelayHoldApplied             : False\nDelayReleaseHoldApplied      : False\nAccountDisabled              : True\nElcProcessingDisabled        : False\nSingleItemRecoveryEnabled    : True",
       "exit_code": 0,
       "duration_ms": 1300
+    },
+    {
+      "command": "Get-User -Identity contractor1@contoso.com",
+      "command_pattern": "get-user.*contractor1",
+      "output": "DisplayName          : Contractor One\nDepartment           : Contractors\nUserPrincipalName    : contractor1@contoso.com\nTitle                : External Contractor\nCompany              : Contoso Staffing",
+      "exit_code": 0,
+      "duration_ms": 1200
+    },
+    {
+      "command": "Get-User -Identity contractor2@contoso.com",
+      "command_pattern": "get-user.*contractor2",
+      "output": "DisplayName          : Contractor Two\nDepartment           : Contractors\nUserPrincipalName    : contractor2@contoso.com\nTitle                : External Contractor\nCompany              : Contoso Staffing",
+      "exit_code": 0,
+      "duration_ms": 1200
     },
     {
       "command": "Get-MailboxFolderStatistics -Identity contractor1@contoso.com -FolderScope RecoverableItems",
@@ -53,7 +67,7 @@
     {
       "command": "Get-RetentionCompliancePolicy",
       "command_pattern": "get-retentioncompliancepolicy(?!.*global)(?!.*distributiondetail)",
-      "output": "Name: Global Retention 5Y\nAdaptiveScopeLocation: All Employees Scope\nDistributionStatus: Success\nEnabled: True",
+      "output": "Name: Global Retention 5Y\nAdaptiveScopeLocation: All Employees Scope\nDistributionStatus: Success\nEnabled: True\nGuid: a1b2c3d4-e5f6-7890-abcd-ef1234567890\nMode: Enforce\nWhenCreated: 06/01/2025 10:00:00 AM",
       "exit_code": 0
     },
     {

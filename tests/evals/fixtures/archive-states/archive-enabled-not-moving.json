@@ -4,8 +4,8 @@
   "commands": [
     {
       "command": "Get-Mailbox -Identity jane.smith@contoso.com | Format-List ArchiveStatus, ArchiveState, RetentionPolicy, AutoExpandingArchiveEnabled",
-      "command_pattern": "get-mailbox.*jane.*format-list.*archive",
-      "output": "ArchiveStatus             : Active\nArchiveState              : Local\nRetentionPolicy           : Default MRM Policy\nAutoExpandingArchiveEnabled : False",
+      "command_pattern": "get-mailbox.*jane",
+      "output": "DisplayName                  : Jane Smith\nPrimarySmtpAddress           : jane.smith@contoso.com\nRecipientTypeDetails         : UserMailbox\nArchiveStatus                : Active\nArchiveState                 : Local\nAutoExpandingArchiveEnabled  : False\nRetentionPolicy              : Default MRM Policy\nInPlaceHolds                 : {}\nLitigationHoldEnabled        : False\nComplianceTagHoldApplied     : False\nDelayHoldApplied             : False\nDelayReleaseHoldApplied      : False\nElcProcessingDisabled        : False\nSingleItemRecoveryEnabled    : True",
       "exit_code": 0, "duration_ms": 1500
     },
     {
@@ -13,6 +13,12 @@
       "command_pattern": "get-mailboxstatistics.*jane.*-archive",
       "output": "DisplayName       : In-Place Archive - Jane Smith\nItemCount         : 12\nTotalItemSize     : 45.2 MB (47,396,352 bytes)",
       "exit_code": 0, "duration_ms": 1400
+    },
+    {
+      "command": "Get-MailboxStatistics -Identity jane.smith@contoso.com",
+      "command_pattern": "get-mailboxstatistics.*jane(?!.*-archive)",
+      "output": "DisplayName       : Jane Smith\nItemCount         : 42,518\nTotalItemSize     : 40.8 GB (43,811,619,840 bytes)\nLastLogonTime     : 3/15/2026 2:34:18 PM",
+      "exit_code": 0, "duration_ms": 1300
     },
     {
       "command": "Export-MailboxDiagnosticLogs -Identity jane.smith@contoso.com -ComponentName MRM",
@@ -41,7 +47,7 @@
     {
       "command": "Get-RetentionCompliancePolicy",
       "command_pattern": "get-retentioncompliancepolicy(?!.*tag)",
-      "output": "Name: Default Exchange Retention\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All",
+      "output": "Name: Default Exchange Retention\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All\nGuid: e9f8a7b6-c5d4-3e2f-1a0b-9c8d7e6f5a4b\nMode: Enforce\nWhenCreated: 01/15/2025 10:00:00 AM",
       "exit_code": 0
     },
     {

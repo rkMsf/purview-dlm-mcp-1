@@ -4,8 +4,8 @@
   "commands": [
     {
       "command": "Get-Mailbox -Identity alex.chen@contoso.com | Format-List ArchiveStatus, ArchiveState, RetentionPolicy, AutoExpandingArchiveEnabled, InPlaceHolds, DelayHoldApplied, LitigationHoldEnabled, ComplianceTagHoldApplied",
-      "command_pattern": "get-mailbox.*alex.*format-list",
-      "output": "ArchiveStatus                : Active\nArchiveState                 : Local\nRetentionPolicy              : Default MRM Policy\nAutoExpandingArchiveEnabled  : False\nInPlaceHolds                 : {}\nDelayHoldApplied             : True\nLitigationHoldEnabled        : False\nComplianceTagHoldApplied     : False",
+      "command_pattern": "get-mailbox.*alex",
+      "output": "DisplayName                  : Alex Chen\nPrimarySmtpAddress           : alex.chen@contoso.com\nRecipientTypeDetails         : UserMailbox\nArchiveStatus                : Active\nArchiveState                 : Local\nRetentionPolicy              : Default MRM Policy\nAutoExpandingArchiveEnabled  : False\nInPlaceHolds                 : {}\nLitigationHoldEnabled        : False\nComplianceTagHoldApplied     : False\nDelayHoldApplied             : True\nDelayReleaseHoldApplied      : False\nElcProcessingDisabled        : False\nSingleItemRecoveryEnabled    : True",
       "exit_code": 0,
       "duration_ms": 1600
     },
@@ -31,6 +31,13 @@
       "duration_ms": 1400
     },
     {
+      "command": "Get-MailboxStatistics -Identity alex.chen@contoso.com",
+      "command_pattern": "get-mailboxstatistics.*alex(?!.*-archive)",
+      "output": "DisplayName       : Alex Chen\nItemCount         : 85,230\nTotalItemSize     : 47.2 GB (50,688,860,160 bytes)\nLastLogonTime     : 3/14/2026 9:12:45 AM",
+      "exit_code": 0,
+      "duration_ms": 1300
+    },
+    {
       "command": "Get-RetentionPolicyTag -Mailbox alex.chen@contoso.com",
       "command_pattern": "get-retentionpolicytag",
       "output": "Name                    : Default 2 year move to archive\nRetentionAction         : MoveToArchive\nAgeLimitForRetention    : 730.00:00:00\nRetentionEnabled        : True\nType                    : All\n\nName                    : Personal 1 year move to archive\nRetentionAction         : MoveToArchive\nAgeLimitForRetention    : 365.00:00:00\nRetentionEnabled        : True\nType                    : Personal",
@@ -47,7 +54,7 @@
     {
       "command": "Get-RetentionCompliancePolicy",
       "command_pattern": "get-retentioncompliancepolicy(?!.*tag)",
-      "output": "Name: Default Exchange Retention\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All",
+      "output": "Name: Default Exchange Retention\nDistributionStatus: Success\nEnabled: True\nExchangeLocation: All\nGuid: e9f8a7b6-c5d4-3e2f-1a0b-9c8d7e6f5a4b\nMode: Enforce\nWhenCreated: 01/15/2025 10:00:00 AM",
       "exit_code": 0
     },
     {

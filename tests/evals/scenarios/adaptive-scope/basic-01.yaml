@@ -3,8 +3,8 @@ tsg: adaptive-scope
 difficulty: intermediate
 symptom: >
   Adaptive scope targeting department=Finance is including users
-  from Marketing. The scope query looks correct but wrong users
-  are being targeted.
+  from Marketing. For example, marketing-user@contoso.com shows up
+  in the scope. The query looks correct but wrong users are being targeted.
 symptom_variants:
   - "Adaptive scope membership is wrong"
   - "Wrong users in scope despite correct query"

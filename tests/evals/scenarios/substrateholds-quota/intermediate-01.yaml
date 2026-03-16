@@ -2,8 +2,8 @@ id: substrateholds-quota-intermediate-01
 tsg: substrateholds-quota
 difficulty: intermediate
 symptom: >
-  User keeps getting quota warnings. Recoverable Items at 95%.
-  We already removed the litigation hold but problem persists.
+  maria.garcia@contoso.com keeps getting quota warnings. Recoverable Items
+  at 95%. We already removed the litigation hold but problem persists.
 symptom_variants:
   - "Recoverable Items growing despite removing litigation hold"
   - "SubstrateHolds folder huge after lit hold removal"

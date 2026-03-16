@@ -5,7 +5,7 @@
     {
       "command": "Get-Mailbox -Identity maria.garcia@contoso.com | Format-List InPlaceHolds, DelayHoldApplied, LitigationHoldEnabled, ComplianceTagHoldApplied, DelayReleaseHoldApplied",
       "command_pattern": "get-mailbox.*maria",
-      "output": "InPlaceHolds              : {UniH7b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e}\nDelayHoldApplied          : True\nLitigationHoldEnabled     : False\nComplianceTagHoldApplied  : True\nDelayReleaseHoldApplied   : False",
+      "output": "DisplayName                  : Maria Garcia\nPrimarySmtpAddress           : maria.garcia@contoso.com\nRecipientTypeDetails         : UserMailbox\nArchiveStatus                : None\nArchiveState                 : None\nAutoExpandingArchiveEnabled  : False\nRetentionPolicy              :\nInPlaceHolds                 : {UniH7b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e}\nLitigationHoldEnabled        : False\nComplianceTagHoldApplied     : True\nDelayHoldApplied             : True\nDelayReleaseHoldApplied      : False\nElcProcessingDisabled        : False\nSingleItemRecoveryEnabled    : True",
       "exit_code": 0,
       "duration_ms": 1500
     },
@@ -26,7 +26,7 @@
     {
       "command": "Get-RetentionCompliancePolicy | Format-List Name, Guid, Enabled",
       "command_pattern": "get-retentioncompliancepolicy",
-      "output": "Name    : GDPR 7-Year Retention\nGuid    : 7b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e\nEnabled : True\n\nName    : Default Exchange Retention\nGuid    : e9f8a7b6-c5d4-3e2f-1a0b-9c8d7e6f5a4b\nEnabled : True",
+      "output": "Name    : GDPR 7-Year Retention\nGuid    : 7b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e\nEnabled : True\nMode    : Enforce\nWhenCreated : 01/01/2025 10:00:00 AM\n\nName    : Default Exchange Retention\nGuid    : e9f8a7b6-c5d4-3e2f-1a0b-9c8d7e6f5a4b\nEnabled : True\nMode    : Enforce\nWhenCreated : 06/15/2024 10:00:00 AM",
       "exit_code": 0,
       "duration_ms": 1600
     },

@@ -5,14 +5,14 @@
     {
       "command": "Get-Mailbox -InactiveMailboxOnly -Identity john.doe@contoso.com | FL DisplayName,IsInactiveMailbox,InPlaceHolds,LitigationHoldEnabled,ComplianceTagHoldApplied,DelayHoldApplied,WhenSoftDeleted",
       "command_pattern": "get-mailbox.*inactivemailboxonly.*john",
-      "output": "DisplayName              : John Doe\nIsInactiveMailbox        : True\nInPlaceHolds             : {UniH9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d}\nLitigationHoldEnabled    : False\nComplianceTagHoldApplied : True\nDelayHoldApplied         : False\nWhenSoftDeleted          : 11/15/2025 12:00:00 AM",
+      "output": "DisplayName                  : John Doe\nPrimarySmtpAddress           : john.doe@contoso.com\nRecipientTypeDetails         : UserMailbox\nIsInactiveMailbox            : True\nArchiveStatus                : None\nArchiveState                 : None\nAutoExpandingArchiveEnabled  : False\nRetentionPolicy              :\nInPlaceHolds                 : {UniH9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d}\nLitigationHoldEnabled        : False\nComplianceTagHoldApplied     : True\nDelayHoldApplied             : False\nDelayReleaseHoldApplied      : False\nElcProcessingDisabled        : False\nSingleItemRecoveryEnabled    : True\nWhenSoftDeleted              : 11/15/2025 12:00:00 AM",
       "exit_code": 0,
       "duration_ms": 1800
     },
     {
       "command": "Get-RetentionCompliancePolicy | FL Name,Guid,Enabled",
       "command_pattern": "get-retentioncompliancepolicy.*(?:format-list|fl)",
-      "output": "Name    : Legal Records Retention\nGuid    : 9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d\nEnabled : True\n\nName    : Standard 3Y Retention\nGuid    : 2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c\nEnabled : True",
+      "output": "Name    : Legal Records Retention\nGuid    : 9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d\nEnabled : True\nMode    : Enforce\nWhenCreated : 04/01/2025 10:00:00 AM\n\nName    : Standard 3Y Retention\nGuid    : 2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c\nEnabled : True\nMode    : Enforce\nWhenCreated : 02/15/2025 10:00:00 AM",
       "exit_code": 0,
       "duration_ms": 2200
     },
@@ -40,7 +40,7 @@
     {
       "command": "Get-AdaptiveScope \"Legal Department Scope\" | FL FilterConditions,LocationCount",
       "command_pattern": "get-adaptivescope.*legal",
-      "output": "FilterConditions : (Department -eq \"Legal\")\nLocationCount    : 125",
+      "output": "Name              : Legal Department Scope\nFilterConditions  : (Department -eq \"Legal\")\nLocationCount     : 125\nLocationType      : User\nWhenCreated       : 03/15/2025 10:00:00 AM\nWhenChanged       : 03/12/2026 06:00:00 AM\nStatus            : Active",
       "exit_code": 0,
       "duration_ms": 1300
     },
@@ -53,7 +53,7 @@
     {
       "command": "Get-RetentionCompliancePolicy",
       "command_pattern": "get-retentioncompliancepolicy(?!.*legal)(?!.*format-list)(?!.*fl\\b)",
-      "output": "Name    : Legal Records Retention\nGuid    : 9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d\nEnabled : True\n\nName    : Standard 3Y Retention\nGuid    : 2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c\nEnabled : True",
+      "output": "Name    : Legal Records Retention\nGuid    : 9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d\nEnabled : True\nMode    : Enforce\nWhenCreated : 04/01/2025 10:00:00 AM\n\nName    : Standard 3Y Retention\nGuid    : 2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c\nEnabled : True\nMode    : Enforce\nWhenCreated : 02/15/2025 10:00:00 AM",
       "exit_code": 0
     },
     {

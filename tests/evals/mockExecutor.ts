@@ -132,6 +132,8 @@ export class MockPowerShellExecutor {
       .replace(/\|\s*select-object\b/g, "| format-list")
       .replace(/\|\s*select\b(?!\s*-)/g, "| format-list")
       .replace(/\|\s*format-table\b/g, "| format-list")
+      // Strip property lists after format-list (already normalized)
+      .replace(/\|\s*format-list\s+[\w*,\s]+$/g, "| format-list")
       // Strip noise parameters agents add
       .replace(/-resultsize\s+\S+/g, "")
       .replace(/-autosize\b/g, "")

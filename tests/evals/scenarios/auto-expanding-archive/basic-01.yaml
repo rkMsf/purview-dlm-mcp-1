@@ -2,8 +2,8 @@ id: auto-expanding-archive-basic-01
 tsg: auto-expanding-archive
 difficulty: basic
 symptom: >
-  Archive mailbox is at 98GB and approaching the 100GB limit but
-  no auxiliary archive is being created.
+  Archive mailbox for bob.jones@contoso.com is at 98GB and approaching
+  the 100GB limit but no auxiliary archive is being created.
 symptom_variants:
   - "Archive full, auto-expanding not working"
   - "Archive near 100GB quota, no aux archive"
