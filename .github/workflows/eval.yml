@@ -1,0 +1,130 @@
+name: MCP Eval Suite
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/evals/**'
+      - '.github/skills/**'
+      - '.claude/skills/**'
+  workflow_dispatch:
+    inputs:
+      log_level:
+        description: 'Log verbosity (0-3)'
+        default: '2'
+      judge_model:
+        description: 'Judge model'
+        default: 'claude-opus-4-6'
+      agent_model:
+        description: 'Agent model for agent eval'
+        default: 'claude-sonnet-4-6'
+
+jobs:
+  security-tests:
+    name: Security (vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npx vitest run tests/evals/security/
+
+  eval-deterministic:
+    name: Deterministic Scoring
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: |
+          npx tsx tests/evals/runner.ts \
+            --layer tool-selection \
+            --layer security \
+            --report markdown \
+            --out eval-report.md \
+            --log-level ${{ inputs.log_level || '1' }}
+      - name: Post PR comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('eval-report.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: |
+            eval-report.md
+            eval-run.log.jsonl
+
+  eval-llm-judge:
+    name: LLM Judge (${{ inputs.judge_model || 'claude-opus-4-6' }})
+    runs-on: ubuntu-latest
+    needs: security-tests
+    # Only run on manual dispatch or when explicitly labeled
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-llm-eval')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm install @github/copilot-sdk
+      - run: |
+          npx tsx tests/evals/runner.ts \
+            --layer tool-selection \
+            --layer diagnostic-accuracy \
+            --layer security \
+            --judge-model ${{ inputs.judge_model || 'claude-opus-4-6' }} \
+            --shuffle 3 \
+            --report json \
+            --out eval-results.json \
+            --log-level ${{ inputs.log_level || '2' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-results-llm
+          path: |
+            eval-results.json
+            eval-run.log.jsonl
+
+  eval-agent:
+    name: Agent Eval (${{ inputs.agent_model || 'claude-sonnet-4-6' }})
+    runs-on: ubuntu-latest
+    needs: security-tests
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-agent-eval')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm install @github/copilot-sdk
+      - run: |
+          npx tsx tests/evals/runner.ts \
+            --mode agent \
+            --agent-model ${{ inputs.agent_model || 'claude-sonnet-4-6' }} \
+            --max-turns 15 \
+            --layer tool-selection \
+            --layer diagnostic-accuracy \
+            --layer security \
+            --judge-model ${{ inputs.judge_model || 'claude-opus-4-6' }} \
+            --shuffle 3 \
+            --report json \
+            --out eval-agent-results.json \
+            --log-level ${{ inputs.log_level || '2' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-agent-results
+          path: |
+            eval-agent-results.json
+            eval-run.log.jsonl
