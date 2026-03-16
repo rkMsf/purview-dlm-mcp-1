@@ -125,6 +125,8 @@ async function main() {
     } catch (err) {
       logger.error(`Failed to create judge: ${err}`);
       logger.warn("Falling back to deterministic-only scoring (no LLM judge)");
+      // Remove diagnostic-accuracy from effective layers so threshold is skipped
+      config.layers = config.layers.filter((l) => l !== "diagnostic-accuracy");
     }
   }
 

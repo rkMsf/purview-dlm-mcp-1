@@ -90,6 +90,8 @@ jobs:
             --report json \
             --out eval-results.json \
             --log-level ${{ inputs.log_level || '2' }}
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v4
         with:
           name: eval-results-llm
@@ -122,6 +124,8 @@ jobs:
             --report json \
             --out eval-agent-results.json \
             --log-level ${{ inputs.log_level || '2' }}
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v4
         with:
           name: eval-agent-results
