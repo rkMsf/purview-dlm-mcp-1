@@ -9,6 +9,9 @@
  * The agent's tool-calling behavior and final diagnostic are captured for scoring.
  */
 
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { fileURLToPath } from "node:url";
 import { CopilotClient, approveAll } from "@github/copilot-sdk";
 import type { Tool } from "@github/copilot-sdk";
 import { lookup, formatResponse } from "../../src/asklearn.js";
@@ -16,13 +19,17 @@ import type { AgentRunnerConfig, AgentRunResult, AgentTraceEntry, EvalScenario }
 import type { MockPowerShellExecutor } from "./mockExecutor.js";
 import type { EvalLogger } from "./logger.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const SYSTEM_PROMPT = `You are a Microsoft Purview DLM diagnostic assistant. You investigate Data Lifecycle Management issues in Exchange Online using read-only PowerShell commands.
 
-You have 4 tools:
+You have 5 tools:
 1. run_powershell — Run read-only PowerShell commands against Exchange Online and Security & Compliance. Only Get-*/Test-*/Export-* cmdlets are allowed.
 2. get_execution_log — Review the audit trail of all commands run so far.
 3. ask_learn — Look up Microsoft Purview documentation from Microsoft Learn. Use sparingly (max 1 call per session).
 4. create_issue — File a GitHub issue (disabled in this session).
+5. read_skill_file — Read a detailed DLM troubleshooting guide for a specific symptom. ALWAYS read the matching reference file before running commands.
 
 CMDLET REFERENCE (use these directly — do NOT run Get-Command to discover cmdlets):
 - Mailbox: Get-Mailbox, Get-MailboxStatistics, Get-MailboxFolderStatistics, Get-Recipient, Get-EXORecipient
@@ -46,6 +53,12 @@ TEMPORAL REASONING:
 - Delay holds expire after ~30 days from hold removal
 - Policy distribution can take 24-48 hours after creation/modification
 - "Recently removed" a policy → check DelayHoldApplied first
+
+SKILL FILES:
+- You have access to detailed troubleshooting guides via the read_skill_file tool
+- The DLM DIAGNOSTICS SKILL section below maps symptoms to reference files
+- ALWAYS read the matching reference file before starting your investigation
+- Follow the step-by-step diagnostic sequence in the reference file
 
 DIAGNOSTIC WORKFLOW:
 1. Identify the symptom category and run 3-6 targeted commands (not more)
@@ -85,8 +98,23 @@ export class AgentRunner {
       throw new Error("AgentRunner not initialized. Call init() first.");
     }
 
+    // Load SKILL.md to give the agent the full decision tree and workflow
+    const skillPath = path.join(__dirname, "../../.github/skills/dlm-diagnostics/SKILL.md");
+    let skillContent = "";
+    try {
+      skillContent = fs.readFileSync(skillPath, "utf-8");
+    } catch {
+      this.logger?.warn("Could not load SKILL.md — agent will run without skill context");
+    }
+
+    const systemPrompt = skillContent
+      ? `${SYSTEM_PROMPT}\n\n${"═".repeat(40)}\nDLM DIAGNOSTICS SKILL\n${"═".repeat(40)}\n${skillContent}`
+      : SYSTEM_PROMPT;
+
     const trace: AgentTraceEntry[] = [];
     let step = 0;
+
+    const refDir = path.join(__dirname, "../../.github/skills/dlm-diagnostics/references");
 
     const tools: Tool[] = [
       {
@@ -178,14 +206,56 @@ export class AgentRunner {
           return msg;
         },
       },
+      {
+        name: "read_skill_file",
+        description:
+          "Read a DLM diagnostics reference file. Use this to load the detailed troubleshooting guide for a specific symptom. Available files: adaptive-scope.md, audit-logs-missing.md, auto-apply-labels.md, auto-expanding-archive.md, diagnostic-commands.md, inactive-mailbox.md, items-not-moving-to-archive.md, mrm-purview-conflict.md, policy-stuck-error.md, retention-policy-not-applying.md, sharepoint-site-deletion-blocked.md, substrateholds-quota.md, teams-messages-not-deleting.md",
+        parameters: {
+          type: "object",
+          properties: {
+            filename: {
+              type: "string",
+              description: "The reference filename (e.g. 'items-not-moving-to-archive.md')",
+            },
+          },
+          required: ["filename"],
+        },
+        handler: async (args: { filename: string }) => {
+          step++;
+          const filePath = path.join(refDir, path.basename(args.filename));
+          try {
+            const content = fs.readFileSync(filePath, "utf-8");
+            trace.push({
+              step,
+              tool: "read_skill_file",
+              input: { filename: args.filename },
+              output: content,
+              timestamp: new Date().toISOString(),
+              duration_ms: 0,
+            });
+            return content;
+          } catch {
+            const msg = `File not found: ${args.filename}`;
+            trace.push({
+              step,
+              tool: "read_skill_file",
+              input: { filename: args.filename },
+              output: msg,
+              timestamp: new Date().toISOString(),
+              duration_ms: 0,
+            });
+            return msg;
+          }
+        },
+      },
     ];
 
     const session = await this.client.createSession({
       model: this.config.model,
       tools,
-      systemMessage: { mode: "replace", content: SYSTEM_PROMPT },
+      systemMessage: { mode: "replace", content: systemPrompt },
       onPermissionRequest: approveAll,
-      availableTools: ["run_powershell", "get_execution_log", "ask_learn", "create_issue"],
+      availableTools: ["run_powershell", "get_execution_log", "ask_learn", "create_issue", "read_skill_file"],
     });
 
     const start = Date.now();
